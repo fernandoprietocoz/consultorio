@@ -1,0 +1,1197 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Administrador psicoanalítico</title>
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' blob: data:; media-src 'self' blob:; font-src 'self'; connect-src 'self'; frame-src 'none'; object-src 'none'; base-uri 'self'; form-action 'self'">
+<meta name="referrer" content="no-referrer">
+<meta name="theme-color" content="#FF7A3D">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<style>
+@font-face{font-family:"DM Sans";font-style:normal;font-weight:300 700;font-display:swap;src:url(dmsans.woff2) format("woff2")}
+:root{
+  --g1:#FF7A3D;--g2:#FF6FB5;--grad:linear-gradient(90deg,#FF7A3D 0%,#FF6FB5 100%);
+  --bg:#F7F6F9;--card:#fff;--ink:#1F1D2B;--ink2:#4B4859;--mut:#8C8999;--line:#ECEAF1;
+  --pres:#FF7A3D;--presSoft:#FFF1E9;--vir:#E2559F;--virSoft:#FFEAF4;
+  --ok:#1F9D6B;--okSoft:#E6F6EF;--bad:#E5484D;--badSoft:#FDECEC;--warnSoft:#FFF4E5;
+  --r:18px;--sh:0 1px 2px rgba(31,29,43,.04),0 6px 20px rgba(31,29,43,.05);
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--ink);font-family:'DM Sans',system-ui,-apple-system,sans-serif;font-size:15px;line-height:1.4}
+body{padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)}
+button,input,select,textarea{font:inherit;color:inherit}
+#app{max-width:480px;margin:0 auto;min-height:100vh;position:relative;padding-bottom:40px}
+h1,h2,h3{margin:0;letter-spacing:-.01em}
+.muted{color:var(--mut)}
+.small{font-size:13px}
+.row{display:flex;align-items:center;gap:10px}
+.between{justify-content:space-between}
+.grow{flex:1;min-width:0}
+.wrap{padding:0 18px}
+.stack>*+*{margin-top:12px}
+
+/* Top bar */
+.top{position:sticky;top:0;z-index:20;background:rgba(247,246,249,.92);backdrop-filter:blur(10px);padding:14px 18px 10px;display:flex;align-items:center;gap:12px}
+.top h1{font-size:21px;font-weight:700;flex:1}
+.icon-btn{width:40px;height:40px;border-radius:50%;border:1px solid var(--line);background:#fff;display:grid;place-items:center;cursor:pointer;flex:none}
+.icon-btn svg{width:20px;height:20px}
+
+/* Buttons */
+.btn{border:0;border-radius:14px;height:50px;padding:0 18px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:8px;text-decoration:none;width:100%;font-size:15px}
+.btn.primary{background:var(--grad);color:#fff;box-shadow:0 6px 16px rgba(255,111,130,.28)}
+.btn.ghost{background:#fff;border:1px solid var(--line);color:var(--ink)}
+.btn.soft{background:var(--presSoft);color:#C4561F}
+.btn.danger{background:var(--badSoft);color:var(--bad)}
+.btn.sm{height:38px;border-radius:11px;font-size:14px;padding:0 12px;width:auto}
+.btn:disabled{opacity:.45;cursor:default}
+.link{background:none;border:0;color:#E0598A;font-weight:600;cursor:pointer;padding:0}
+
+/* Cards */
+.card{background:var(--card);border-radius:var(--r);padding:16px;box-shadow:var(--sh)}
+.card.tap{cursor:pointer}
+.chip{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:600;padding:3px 9px;border-radius:999px;white-space:nowrap}
+.chip.pres{background:var(--presSoft);color:#C4561F}
+.chip.vir{background:var(--virSoft);color:#B8377A}
+.chip.ok{background:var(--okSoft);color:var(--ok)}
+.chip.bad{background:var(--badSoft);color:var(--bad)}
+.chip.gray{background:#F0EFF4;color:var(--ink2)}
+.chip.warn{background:var(--warnSoft);color:#B86A00}
+.dot{width:8px;height:8px;border-radius:50%;display:inline-block;flex:none}
+.dot.pres{background:var(--pres)}.dot.vir{background:var(--vir)}
+
+/* Illustration placeholder */
+.illo{border:2px dashed #F3C2D3;border-radius:16px;background:repeating-linear-gradient(135deg,#FFF7F2 0 10px,#FFF0F6 10px 20px);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:10px 14px;color:#C0577F;font-size:12.5px;gap:3px}
+.illo b{font-size:10.5px;letter-spacing:.12em;color:#E0598A}
+
+/* Welcome */
+.welcome{position:fixed;inset:0;z-index:50;display:flex;flex-direction:column;align-items:center;text-align:center;cursor:pointer;background:#2A2433 center/cover no-repeat;color:#fff;padding:env(safe-area-inset-top) 28px env(safe-area-inset-bottom)}
+.welcome.nophoto{background:linear-gradient(160deg,#FF8A50 0%,#FF6FB5 100%)}
+.welcome::before{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(20,15,30,.45) 0%,rgba(20,15,30,0) 38%,rgba(20,15,30,0) 62%,rgba(20,15,30,.45) 100%)}
+.welcome.nophoto::before{background:none}
+.welcome>*{position:relative}
+.w-top{display:flex;flex-direction:column;align-items:center;margin-top:max(10vh,40px)}
+.w-top .mark{width:92px;height:92px;border-radius:50%;display:grid;place-items:center;margin-bottom:22px}
+.w-top .mark svg{width:46px;height:46px}
+.w-top .mark.grad{background:var(--grad);color:#fff;border:2px solid rgba(255,255,255,.75);box-shadow:0 10px 26px rgba(20,15,30,.22)}
+.w-top .mark.white{background:#fff;color:#E2559F;box-shadow:0 10px 26px rgba(20,15,30,.15)}
+.w-top h1{font-size:28px;line-height:1.2;font-weight:700;letter-spacing:.035em;max-width:310px;text-shadow:0 1px 12px rgba(20,15,30,.18)}
+.w-bot{position:absolute;left:0;right:0;bottom:calc(36px + env(safe-area-inset-bottom));font-size:13px;opacity:.85;animation:pl 1.8s infinite;letter-spacing:.04em}
+.w-btn{width:78px;height:78px;border-radius:50%;border:1.5px solid rgba(255,255,255,.85);background:rgba(255,255,255,.14);backdrop-filter:blur(6px);display:grid;place-items:center;animation:pl 2.4s infinite}
+.w-btn svg{width:36px;height:36px}
+.w-bot span{font-size:13px;letter-spacing:.12em;text-transform:uppercase;font-weight:400;opacity:.9}
+@keyframes pl{50%{opacity:.35}}
+
+/* Menu */
+.hello{padding:22px 18px 6px}
+.hello h2{font-size:26px;font-weight:700}
+.menu-item{display:flex;align-items:center;gap:14px;cursor:pointer;padding:14px 16px}
+.num{width:52px;height:52px;border-radius:16px;background:var(--grad);color:#fff;font-weight:700;font-size:20px;display:grid;place-items:center;flex:none}
+.menu-item h3{font-size:18px}
+.today-list{margin-top:10px}
+.today-list .r{display:flex;align-items:center;gap:10px;padding:7px 0;border-top:1px solid var(--line)}
+.banner{border-radius:16px;padding:12px 14px;background:var(--warnSoft);color:#8A5000;font-size:14px;display:flex;gap:10px;align-items:flex-start}
+
+/* Segmented */
+.seg{display:flex;background:#EEEDF2;border-radius:12px;padding:3px;gap:3px}
+.seg button{flex:1;border:0;background:none;height:36px;border-radius:9px;font-weight:600;font-size:14px;color:var(--ink2);cursor:pointer}
+.seg button.on{background:#fff;color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.08)}
+
+/* Calendar */
+.calbar{display:flex;align-items:center;gap:8px;padding:0 18px 10px}
+.calbar .lbl{flex:1;font-weight:700;font-size:16px;text-transform:capitalize}
+.week{margin:0 8px;background:#fff;border-radius:var(--r);box-shadow:var(--sh)}
+.wk-head{display:grid;grid-template-columns:36px repeat(7,1fr);border-bottom:1px solid var(--line);position:sticky;top:66px;background:#fff;z-index:5;border-radius:var(--r) var(--r) 0 0}
+.wk-head div{text-align:center;padding:6px 0 4px;font-size:11px;color:var(--mut);cursor:pointer}
+.wk-head div b{display:block;font-size:15px;color:var(--ink);margin-top:2px;width:28px;height:28px;line-height:28px;border-radius:50%;margin:2px auto 0}
+.wk-head div.today b{background:var(--grad);color:#fff}
+.wk-body{display:grid;grid-template-columns:36px repeat(7,1fr);position:relative}
+.tcol div{font-size:9px;white-space:nowrap;color:var(--mut);text-align:right;padding-right:4px;transform:translateY(-6px)}
+.dcol{position:relative;border-left:1px solid var(--line);cursor:pointer}
+.blk{position:absolute;left:2px;right:2px;border-radius:7px;padding:2px 4px;font-size:10px;line-height:1.15;overflow:hidden;cursor:pointer;border-left:3px solid}
+.blk b{display:block;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.blk.presencial{background:var(--presSoft);border-color:var(--pres);color:#8A3A12}
+.blk.virtual{background:var(--virSoft);border-color:var(--vir);color:#8C2460}
+.blk.st-cancelo,.blk.st-cancelo_tarde{background:#F3F2F6;border-color:#C9C6D2;color:#8C8999}
+.blk.st-cancelo b,.blk.st-cancelo_tarde b{text-decoration:line-through}
+.blk.st-no_asistio{background:var(--badSoft);border-color:var(--bad);color:#9B2226}
+.day-list .slot{display:flex;gap:12px;align-items:stretch;min-height:50px}
+.day-list .h{width:48px;font-size:13px;color:var(--mut);padding-top:10px;text-align:right;flex:none}
+.day-list .free{flex:1;border:1px dashed var(--line);border-radius:14px;margin:4px 0;color:#C2BFCC;font-size:13px;display:flex;align-items:center;padding:0 14px;cursor:pointer}
+.scard{flex:1;margin:4px 0;border-radius:14px;padding:10px 14px;cursor:pointer;border-left:4px solid}
+.scard.presencial{background:var(--presSoft);border-color:var(--pres)}
+.scard.virtual{background:var(--virSoft);border-color:var(--vir)}
+.scard.st-cancelo,.scard.st-cancelo_tarde{background:#F3F2F6;border-color:#C9C6D2}
+.scard.st-no_asistio{background:var(--badSoft);border-color:var(--bad)}
+.scard .nm{font-weight:700;font-size:15px}
+.fab{position:fixed;right:max(18px,calc(50% - 222px));bottom:24px;width:58px;height:58px;border-radius:50%;background:var(--grad);color:#fff;border:0;box-shadow:0 8px 22px rgba(255,111,130,.4);display:grid;place-items:center;cursor:pointer;z-index:30}
+.fab svg{width:26px;height:26px}
+
+/* Lists */
+.search{position:relative}
+.search input{padding-left:40px}
+.search svg{position:absolute;left:13px;top:14px;width:18px;height:18px;color:var(--mut)}
+.pitem{display:flex;align-items:center;gap:12px;cursor:pointer}
+.avatar{width:44px;height:44px;border-radius:14px;background:var(--grad);color:#fff;font-weight:700;display:grid;place-items:center;flex:none;font-size:15px}
+.avatar.v{background:linear-gradient(135deg,#FF8DC4,#E2559F)}
+.pitem .nm{font-weight:700}
+.amount{font-weight:700;font-size:16px;white-space:nowrap}
+.amount.due{color:var(--bad)}
+.big{font-size:30px;font-weight:700;letter-spacing:-.02em}
+.tabs{display:flex;gap:8px;padding:0 18px 12px;overflow-x:auto}
+.tabs button{border:1px solid var(--line);background:#fff;border-radius:999px;height:38px;padding:0 16px;font-weight:600;cursor:pointer;white-space:nowrap;font-size:14px}
+.tabs button.on{background:var(--grad);border-color:transparent;color:#fff}
+.sec-title{font-size:13px;font-weight:700;color:var(--mut);text-transform:uppercase;letter-spacing:.06em;margin:20px 0 8px}
+.lrow{display:flex;align-items:center;gap:10px;padding:10px 0;border-top:1px solid var(--line)}
+.lrow:first-child{border-top:0}
+
+/* Forms */
+label.f{display:block;font-size:13px;font-weight:600;color:var(--ink2);margin-bottom:6px}
+.in{width:100%;height:48px;border-radius:12px;border:1px solid var(--line);background:#fff;padding:0 14px;outline:none;font-size:15px}
+textarea.in{height:auto;min-height:96px;padding:12px 14px;resize:vertical}
+.in:focus{border-color:var(--g1);box-shadow:0 0 0 3px rgba(255,122,61,.12)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.slotrow{display:grid;grid-template-columns:1fr 112px 48px;gap:8px;margin-bottom:8px}
+.tp{display:grid;grid-template-columns:1fr 132px;gap:8px;align-items:center}.tp .seg button{height:40px}
+.ico{width:54px;height:54px;border-radius:50%;background:var(--grad);box-shadow:0 6px 14px rgba(255,111,130,.28);display:grid;place-items:center;flex:none;color:#fff}
+.ico svg{width:28px;height:28px}
+.menu-item h3{font-size:19px;font-weight:700}
+.menu-btn{display:flex;align-items:center;gap:14px;cursor:pointer;border-radius:20px;padding:20px 20px;background:var(--grad);color:#fff;box-shadow:0 10px 24px rgba(255,111,130,.30)}
+.menu-btn h3{font-size:22px;font-weight:700}
+.menu-btn .sub{font-size:14px;opacity:.92;margin-top:2px}
+.menu-btn svg{color:#fff}
+.thumb{width:48px;height:48px;border-radius:10px;object-fit:cover;flex:none;cursor:pointer;border:1px solid var(--line)}
+.counter{font-size:12px;text-align:right;margin-top:4px;color:var(--mut)}
+.counter.over{color:var(--bad);font-weight:700}
+
+/* Sheet & dialog */
+.sheet-wrap{position:fixed;inset:0;z-index:60}
+.sheet-bg{position:absolute;inset:0;background:rgba(25,20,35,.42);opacity:0;transition:opacity .2s}
+.sheet{position:absolute;left:0;right:0;bottom:0;max-width:480px;margin:0 auto;background:var(--bg);border-radius:26px 26px 0 0;max-height:92vh;overflow:auto;padding:8px 18px calc(24px + env(safe-area-inset-bottom));transform:translateY(100%);transition:transform .25s ease}
+.sheet-wrap.on .sheet{transform:none}.sheet-wrap.on .sheet-bg{opacity:1}
+.grab{width:42px;height:5px;border-radius:5px;background:#D8D5DF;margin:4px auto 14px}
+.sheet h2{font-size:21px;font-weight:700}
+.actgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.actbtn{border:1px solid var(--line);background:#fff;border-radius:16px;height:74px;font-weight:700;font-size:15px;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px}
+.actbtn small{font-weight:500;color:var(--mut);font-size:11.5px}
+.actbtn.sel{border:2px solid var(--g1);background:var(--presSoft)}
+.alert{border-radius:14px;padding:12px 14px;font-size:14px;line-height:1.45}
+.alert.bad{background:var(--badSoft);color:#9B2226}
+.alert.ok{background:var(--okSoft);color:#155C40}
+.alert.warn{background:var(--warnSoft);color:#8A5000}
+.alert.info{background:#F0EFF4;color:var(--ink2)}
+.dlg-wrap{position:fixed;inset:0;z-index:80;background:rgba(25,20,35,.45);display:grid;place-items:center;padding:24px}
+.dlg{background:#fff;border-radius:22px;padding:22px;max-width:380px;width:100%}
+.dlg h3{font-size:18px;margin-bottom:8px}
+.dlg p{margin:0 0 16px;color:var(--ink2)}
+.dlg-btns{display:flex;flex-direction:column;gap:8px}
+.toast{position:fixed;left:50%;bottom:96px;transform:translateX(-50%);background:#1F1D2B;color:#fff;padding:11px 18px;border-radius:12px;font-size:14px;z-index:90;max-width:90vw;box-shadow:0 8px 20px rgba(0,0,0,.2)}
+.loading{padding:60px 20px;text-align:center;color:var(--mut)}
+.radio{display:flex;gap:10px;align-items:flex-start;padding:12px;border:1px solid var(--line);border-radius:14px;background:#fff;cursor:pointer}
+.radio input{margin-top:3px;accent-color:var(--g1)}
+.filebtn{position:relative;overflow:hidden}
+.filebtn input[type=file]{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;font-size:200px;z-index:2}
+.switch{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.lock{min-height:100vh;display:flex;flex-direction:column;align-items:center;text-align:center;color:#fff;background:linear-gradient(160deg,#FF8A50 0%,#FF6FB5 100%);padding:env(safe-area-inset-top) 20px calc(30px + env(safe-area-inset-bottom))}
+.lock-card{background:#fff;color:var(--ink);border-radius:22px;padding:20px;width:100%;max-width:400px;text-align:left;margin-top:26px;box-shadow:0 12px 30px rgba(20,15,30,.18)}
+.pitem{flex-wrap:wrap}.pchips{display:flex;gap:8px;flex-basis:100%;padding-left:56px;margin-top:-2px}
+.pchips button{white-space:nowrap;border:1px solid var(--line);background:#fff;border-radius:999px;height:32px;padding:0 12px;font-size:12.5px;font-weight:600;cursor:pointer;color:var(--ink2)}
+.pchips button.cl{background:var(--virSoft);border-color:transparent;color:#B8377A}
+.mico{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;flex:none;background:var(--presSoft);color:#C4561F}
+.mico.audio{background:var(--virSoft);color:#B8377A}.mico.nota{background:#F0EFF4;color:var(--ink2)}
+.actbtn svg{margin-bottom:2px}
+.doctext{white-space:pre-wrap;word-break:break-word;font-size:15px;line-height:1.55;max-height:55vh;overflow:auto}
+.recdot{width:16px;height:16px;border-radius:50%;background:var(--bad);animation:pl 1.2s infinite}
+.pbar{height:8px;border-radius:8px;background:#EEEDF2;overflow:hidden;margin:10px 0 6px}.pbar div{height:100%;width:0;background:var(--grad);transition:width .2s}
+</style>
+</head>
+<body>
+<div id="app"><div class="loading">Cargando…</div></div>
+
+<script src="vault.js"></script>
+<script>
+"use strict";
+/* ============ Utilidades ============ */
+const $=(s,r=document)=>r.querySelector(s);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const pad=n=>String(n).padStart(2,'0');
+const ymd=d=>`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+const parseD=s=>{const[y,m,d]=s.split('-').map(Number);return new Date(y,m-1,d)};
+const addD=(s,n)=>{const d=parseD(s);d.setDate(d.getDate()+n);return ymd(d)};
+const dow=s=>{const x=parseD(s).getDay();return x===0?7:x};
+const today=()=>ymd(new Date());
+const toMin=h=>{const[a,b]=h.split(':').map(Number);return a*60+b};
+const fromMin=m=>`${pad(Math.floor(m/60))}:${pad(m%60)}`;
+const fmtH=h=>{if(!h)return'';const[H,M]=h.split(':').map(Number);return `${H%12||12}:${pad(M)} ${H<12?'am':'pm'}`};
+const fmtHc=h=>{const[H,M]=h.split(':').map(Number);return `${H%12||12}${M?':'+pad(M):''} ${H<12?'am':'pm'}`};
+const fmtHh=H=>`${H%12||12} ${H<12||H===24?'am':'pm'}`;
+function tp(attr,val){return `<input class="in" type="time" step="300" ${attr} value="${esc(val||'09:00')}">`}
+function tpVal(w){return w.value||''}
+const dt=(f,h)=>{const d=parseD(f);const[a,b]=h.split(':').map(Number);d.setHours(a,b,0,0);return d};
+const mondayOf=s=>addD(s,1-dow(s));
+const DIAS=['','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado','Domingo'];
+const D3=['','Lun','Mar','Mié','Jue','Vie','Sáb','Dom'];
+const MESES=['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+const fmtLong=f=>{const d=parseD(f);return `${DIAS[dow(f)]} ${d.getDate()} de ${MESES[d.getMonth()]}`};
+const fmtShort=f=>{const d=parseD(f);return `${D3[dow(f)]} ${d.getDate()}/${pad(d.getMonth()+1)}`};
+const mesKey=f=>f.slice(0,7);
+const mesLabel=mk=>{const[y,m]=mk.split('-').map(Number);return `${MESES[m-1]} ${y}`};
+const lastDay=mk=>{const[y,m]=mk.split('-').map(Number);return ymd(new Date(y,m,0))};
+const shiftMes=(mk,n)=>{const[y,m]=mk.split('-').map(Number);const d=new Date(y,m-1+n,1);return ymd(d).slice(0,7)};
+const money=n=>'S/ '+(Math.round((n||0)*100)/100).toLocaleString('es-PE',{maximumFractionDigits:2});
+const words=s=>(s||'').trim().split(/\s+/).filter(Boolean).length;
+const initials=n=>(n||'?').trim().split(/\s+/).slice(0,2).map(x=>x[0]).join('').toUpperCase();
+const first=n=>(n||'').trim().split(/\s+/)[0];
+const clone=o=>JSON.parse(JSON.stringify(o??null));
+const ICON={
+ back:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>',
+ next:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>',
+ gear:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>',
+ mCal:'<svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="7" width="22" height="20" rx="4"/><path d="M5 13h22M11 4v5M21 4v5"/><circle cx="11" cy="18.5" r=".6" fill="currentColor"/><circle cx="16" cy="18.5" r=".6" fill="currentColor"/><circle cx="21" cy="18.5" r=".6" fill="currentColor"/><circle cx="11" cy="22.5" r=".6" fill="currentColor"/><circle cx="16" cy="22.5" r=".6" fill="currentColor"/></svg>',
+ mPac:'<svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 15V11a4 4 0 0 1 4-4h6a4 4 0 0 1 4 4v4"/><path d="M7 15a2 2 0 0 1 2 2v2h14v-2a2 2 0 1 1 4 0v6H5v-6a2 2 0 0 1 2-2z"/><path d="M8 23v3M24 23v3"/></svg>',
+ mCta:'<svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 10.5V9a3 3 0 0 1 3-3h13"/><rect x="5" y="10" width="22" height="16" rx="4"/><path d="M27 15h-5a3 3 0 0 0 0 6h5"/><circle cx="22" cy="18" r=".7" fill="currentColor"/></svg>',
+ logo:'<svg viewBox="30 6 92 196" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="62" cy="34" r="23" stroke-dasharray="1 6"/><path d="M62 34C59 29.5 56 27.5 53 27.5 49.4 27.5 46.5 30.4 46.5 34S49.4 40.5 53 40.5C56 40.5 59 38.5 62 34 65 29.5 68 27.5 71 27.5 74.6 27.5 77.5 30.4 77.5 34S74.6 40.5 71 40.5C68 40.5 65 38.5 62 34Z"/><path d="M60 99L43 52M64 99L81 52" stroke-width="2" stroke-dasharray="1 6"/><path d="M50 95L46 90M74 95L78 90M62 93V87" stroke-width="2"/><path d="M62 101C72 101 79 109 79 119 79 129 72 136 64 136 57 136 52 133 49 129L46 125Q44 123 46 122L48 121C47 112 53 101 62 101Z"/><path d="M62 101C72 101 79 109 79 119 79 124 78 128 75 131 74 121 68 113 58 111 56 106 58 102 62 101Z" fill="#fff"/><circle cx="54" cy="116" r="1.6" fill="#fff" stroke="none"/><path d="M49 130Q51 131.5 54 130.5" stroke-width="2"/><path d="M58 136V143M66 135V143"/><path transform="translate(105,134) rotate(20)" d="M-4 1C-5-3-6-5-9-7C-11-8-10.5-11-8-10.5L-5-8.5C-6-12.5-6-15-5-17C-4-19-1.8-18.5-2.3-15.5C-2-19 1-19.5 0.9-16C1.6-19 4.3-18.5 3.7-15.2C4.7-17 7-16 6-12.5C6-9 5.2-4 4 1" stroke-width="2.1"/><path d="M36 198C36 168 43 149 56 144H68C78 147 84 154 86 162L101 131 109 135 92 176C90 183 88 190 88 198Z" fill="#fff"/><path d="M98.5 137.5L106.5 141.5M101.5 132.5L98.5 138.6M104.5 134L101.5 140.1M107.5 135.5L104.5 141.6" stroke="#FF7A6A" stroke-width="1.4"/><path d="M57 144Q62 148 67 144" stroke="#FF7A6A" stroke-width="1.6"/><path d="M42 190H84M46 190V196M53 190V196M60 190V196M67 190V196M74 190V196M81 190V196" stroke="#FF7A6A" stroke-width="1.4"/></svg>',
+ tap:'<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12.5 22c-3 0-5-2-5.6-4.6L5.2 13a1.3 1.3 0 0 1 2.3-1.2L9.5 15V6.5a1.5 1.5 0 0 1 3 0V12a1.5 1.5 0 0 1 3 .3V13a1.5 1.5 0 0 1 3 .4v.6a1.4 1.4 0 0 1 2.6.7V17c0 2.8-2.4 5-5.4 5z"/><path d="M6.5 5L5 4M15.5 5L17 4M11 2.2V1"/></svg>',
+ home:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h5v-6h4v6h5V10"/></svg>',
+ plus:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>',
+ x:'<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>',
+ search:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>',
+ cal:'<svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>',
+};
+const illo=(desc,h=110,extra='')=>`<div class="illo" style="height:${h}px;${extra}"><b>ILUSTRACIÓN</b>${esc(desc)}</div>`;
+
+/* ============ Estado ============ */
+const DEF={tarifa:160,consultorio:20,hIni:8,hFin:21,nombre:'',bloqueo:5};
+const S={pac:{},ses:{},pag:{},rec:{},cfg:{},mat:{},ready:false,err:null};
+const cfg=k=>(S.cfg[k]??DEF[k]);
+const ACT=new Set(['programada','asistio','no_asistio']);       // ocupan el horario
+const COBRA=new Set(['asistio','no_asistio','cancelo_tarde']);   // se cobran
+const EST={programada:['Programada','gray'],asistio:['Asistió','ok'],no_asistio:['No asistió','bad'],cancelo:['Canceló a tiempo','gray'],cancelo_tarde:['Canceló tarde · se cobra','warn']};
+const PAGO={sesion:'Por sesión',quincenal:'Quincenal',mensual:'Mensual'};
+const ui={cal:{mode:'semana',date:today()},cuentasTab:'cobrar',mes:mesKey(today()),recMes:null,q:'',matFecha:null,matPid:null,recording:false};
+
+/* ============ Modelo de sesiones ============ */
+function scheduleAt(p,d){let r=null;for(const h of (p.horarios||[]))if(h.desde<=d&&(!r||h.desde>=r.desde))r=h;return r}
+const enPausa=(p,d)=>(p.pausas||[]).some(x=>x.desde<=d&&(!x.hasta||d<=x.hasta));
+const pausaActual=(p,d=today())=>(p.pausas||[]).find(x=>x.desde<=d&&(!x.hasta||d<=x.hasta))||(p.pausas||[]).find(x=>x.desde>d);
+const estadoPac=(p,t=today())=>p.fin&&p.fin<t?'alta':enPausa(p,t)?'pausa':'activo';
+function tarifaEn(p,d){let r=null;for(const t of (p.tarifas||[]))if(t.desde<=d&&(!r||t.desde>=r.desde))r=t;return r?+r.monto:+(p.tarifa||cfg('tarifa'))}
+function build(p,key,fo,ho,ov,extra){
+  const mv=!extra&&ov&&ov.movedTo;const fecha=mv?mv.fecha:fo,hora=mv?mv.hora:ho;
+  const modalidad=(ov&&ov.modalidad)||p.modalidad||'presencial';
+  const start=dt(fecha,hora),end=new Date(start.getTime()+50*60000);
+  const explicit=ov&&ov.estado;
+  const estado=explicit||(end<new Date()?'asistio':'programada');
+  return {key,pid:p.id,p,fecha,hora,fechaOrig:fo,horaOrig:ho,modalidad,estado,implicit:!explicit,extra:!!extra,movida:!!mv,start};
+}
+const memo=new Map();
+function occurrences(from,to){
+  const mk=from+'|'+to;if(memo.has(mk))return memo.get(mk);
+  const out=[];const f0=addD(from,-40),t0=addD(to,40);
+  for(const p of Object.values(S.pac)){
+    if(!p.horarios||!p.horarios.length)continue;
+    let d=p.inicio&&p.inicio>f0?p.inicio:f0;
+    const end=p.fin&&p.fin<t0?p.fin:t0;
+    for(;d<=end;d=addD(d,1)){
+      if(p.pausas&&enPausa(p,d))continue;
+      const h=scheduleAt(p,d);if(!h)continue;const w=dow(d);
+      for(const sl of h.slots||[])if(+sl.dia===w){
+        const key=`${p.id}__${d}__${sl.hora.replace(':','')}`;
+        out.push(build(p,key,d,sl.hora,S.ses[key],false));
+      }
+    }
+  }
+  for(const o of Object.values(S.ses))if(o.extra&&S.pac[o.pid])out.push(build(S.pac[o.pid],o.id,o.fecha,o.hora,o,true));
+  const r=out.filter(o=>o.fecha>=from&&o.fecha<=to).sort((a,b)=>a.start-b.start);
+  memo.set(mk,r);return r;
+}
+function allOcc(){
+  let min=today();for(const p of Object.values(S.pac))if(p.inicio&&p.inicio<min)min=p.inicio;
+  for(const o of Object.values(S.ses))if(o.extra&&o.fecha<min)min=o.fecha;
+  return occurrences(min,addD(today(),120));
+}
+function findOcc(key){return allOcc().find(o=>o.key===key)||occurrences(addD(today(),-400),addD(today(),400)).find(o=>o.key===key)}
+const firstMemo=new Map();
+function firstKey(pid){if(firstMemo.has(pid))return firstMemo.get(pid);const o=allOcc().find(o=>o.pid===pid&&(COBRA.has(o.estado)||o.estado==='programada'));const k=o?o.key:null;firstMemo.set(pid,k);return k}
+const esPrimeraGratis=o=>!!(o.p.primeraGratis&&firstKey(o.pid)===o.key);
+const costo=o=>esPrimeraGratis(o)?0:tarifaEn(o.p,o.fecha);
+function devengado(pid,from,to){return allOcc().filter(o=>o.pid===pid&&COBRA.has(o.estado)&&(!from||o.fecha>=from)&&(!to||o.fecha<=to)).reduce((s,o)=>s+costo(o),0)}
+function pagado(pid){return Object.values(S.pag).filter(x=>x.pid===pid).reduce((s,x)=>s+(+x.monto||0),0)}
+function saldo(pid){return devengado(pid)-pagado(pid)}
+const pagoDeSesion=key=>Object.values(S.pag).find(x=>x.sesKey===key);
+
+/* reglas de agenda */
+function activeOn(fecha,exceptKey){return occurrences(fecha,fecha).filter(o=>ACT.has(o.estado)&&o.key!==exceptKey)}
+function maxRun(mins){const s=[...new Set(mins)].sort((a,b)=>a-b);let best=0,run=0,prev=null;for(const m of s){run=(prev!==null&&m-prev===60)?run+1:1;best=Math.max(best,run);prev=m}return best}
+async function checkSlot(fecha,hora,exceptKey){
+  const others=activeOn(fecha,exceptKey);const m=toMin(hora);
+  const clash=others.find(o=>Math.abs(toMin(o.hora)-m)<50);
+  if(clash){const ok=await ask('Horario ocupado',`A esa hora ya tienes a <b>${esc(clash.p.nombre)}</b> (${fmtH(clash.hora)}). ¿Agendar de todos modos?`,[{t:'Volver',v:false,cls:'primary'},{t:'Agendar igual',v:true}]);if(!ok)return false}
+  const run=maxRun([...others.map(o=>toMin(o.hora)),m]);
+  if(run>3){const ok=await ask(`${run} sesiones seguidas`,`Ese día quedarías con <b>${run} sesiones seguidas</b>. Prefieres no agendar más de 3 seguidas.`,[{t:'Elegir otro horario',v:false,cls:'primary'},{t:'Agendar de todos modos',v:true}]);if(!ok)return false}
+  return true;
+}
+async function checkWeekly(pid,slots,desde){
+  for(const sl of slots){
+    const m=toMin(sl.hora);const same=[];
+    for(const p of Object.values(S.pac)){if(p.id===pid||(p.fin&&p.fin<desde))continue;const h=scheduleAt(p,desde)||scheduleAt(p,'9999-12-31');for(const x of (h&&h.slots)||[])if(+x.dia===+sl.dia)same.push({p,m:toMin(x.hora),hora:x.hora})}
+    const mine=slots.filter(x=>+x.dia===+sl.dia).map(x=>toMin(x.hora));
+    const clash=same.find(x=>Math.abs(x.m-m)<50);
+    if(clash){const ok=await ask('Horario ocupado',`Los ${DIAS[sl.dia].toLowerCase()} a las ${fmtH(clash.hora)} ya está <b>${esc(clash.p.nombre)}</b>. ¿Guardar de todos modos?`,[{t:'Revisar',v:false,cls:'primary'},{t:'Guardar igual',v:true}]);if(!ok)return false}
+    const run=maxRun([...same.map(x=>x.m),...mine]);
+    if(run>3){const ok=await ask(`${run} sesiones seguidas`,`Los ${DIAS[sl.dia].toLowerCase()} quedarías con <b>${run} sesiones seguidas</b>. Prefieres no agendar más de 3 seguidas.`,[{t:'Revisar',v:false,cls:'primary'},{t:'Guardar de todos modos',v:true}]);if(!ok)return false}
+  }
+  return true;
+}
+
+/* ============ Datos locales cifrados ============ */
+/* Todo vive en memoria mientras la app está desbloqueada y se guarda cifrado en el teléfono. */
+const COLS={pacientes:'pac',sesiones:'ses',pagos:'pag',recibos:'rec',material:'mat'};
+const strip=o=>{const c=clone(o);delete c.id;for(const k in c)if(c[k]===undefined||c[k]===null&&k!=='movedTo')delete c[k];return c};
+const snapshot=()=>({pac:S.pac,ses:S.ses,pag:S.pag,rec:S.rec,cfg:S.cfg,mat:S.mat});
+function applyPath(path,data){
+  if(path==='config/app'){S.cfg=data?clone(data):{};return true}
+  const i=path.indexOf('/');const t=COLS[path.slice(0,i)];if(!t)return false;const id=path.slice(i+1);
+  if(data)S[t][id]=Object.assign(strip(data),{id});else delete S[t][id];return true;
+}
+async function persistNow(){try{await Vault.saveState(snapshot())}catch(e){dbFail(e);throw e}}
+async function setDoc(path,data){if(!Vault.unlocked())throw{code:'locked'};if(!applyPath(path,data))return;changed();await persistNow()}
+async function delDoc(path){if(!Vault.unlocked())throw{code:'locked'};applyPath(path,null);changed();await persistNow()}
+function newId(){return Vault.newId()}
+function dbFail(e){toast(e&&e.name==='QuotaExceededError'?'El teléfono no tiene espacio suficiente para guardar.':e&&e.message==='locked'?'La app se bloqueó. Vuelve a entrar.':'No se pudo guardar. Inténtalo otra vez.')}
+async function saveOv(o,patch){
+  const base=clone(S.ses[o.key])||{};
+  const d=Object.assign(base,{pid:o.pid,fechaOrig:o.fechaOrig,horaOrig:o.horaOrig},patch);
+  if(o.extra){d.extra=true;d.fecha=d.fecha||o.fecha;d.hora=d.hora||o.hora}
+  if(d.estado==null)delete d.estado;if(d.movedTo==null)delete d.movedTo;if(d.modalidad==null)delete d.modalidad;
+  await setDoc('sesiones/'+o.key,d);
+}
+function changed(){memo.clear();firstMemo.clear();S.ready=true;render()}
+function loadInto(st){st=st||{};for(const k of['pac','ses','pag','rec','mat']){S[k]={};for(const[id,v]of Object.entries(st[k]||{}))S[k][id]=Object.assign({},v,{id})}S.cfg=st.cfg||{};memo.clear();firstMemo.clear();S.ready=true}
+
+/* ---- archivos cifrados ---- */
+const blobURLs=new Map();
+async function fileURL(id){if(blobURLs.has(id))return blobURLs.get(id);const b=await Vault.getFile(id);if(!b)return'';const u=URL.createObjectURL(b);blobURLs.set(id,u);return u}
+function hydrate(root){if(!root)return;root.querySelectorAll('[data-blob]').forEach(async el=>{try{const u=await fileURL(el.dataset.blob);if(u)el.src=u}catch(_){}});root.querySelectorAll('[data-bgblob]').forEach(async el=>{try{const u=await fileURL(el.dataset.bgblob);if(u)el.style.backgroundImage=`url('${u}')`}catch(_){}})}
+function dropFile(id){if(!id)return;if(blobURLs.has(id)){URL.revokeObjectURL(blobURLs.get(id));blobURLs.delete(id)}Vault.delFile(id).catch(()=>{})}
+const safeName=s=>String(s||'archivo').replace(/[\\/:*?"<>|]/g,'').trim()||'archivo';
+/* Guarda o comparte un archivo fuera de la app (sale sin cifrar: se avisa antes donde corresponde). */
+async function saveFile(blob,name,opts={}){
+  name=safeName(name);const f=new File([blob],name,{type:blob.type||'application/octet-stream'});
+  if(opts.share&&navigator.canShare&&navigator.canShare({files:[f]})){
+    try{await navigator.share(Object.assign({files:[f]},opts.text?{text:opts.text}:{}));return true}catch(e){if(e&&e.name==='AbortError')return false}
+  }
+  const u=URL.createObjectURL(blob);const a=document.createElement('a');a.href=u;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),60000);
+  toast('Guardado en Descargas: '+name);return true;
+}
+
+/* ============ Interfaz: utilidades ============ */
+const A={};
+document.addEventListener('click',e=>{if(e.target.matches&&e.target.matches('input[type=file]'))return;const t=e.target.closest('[data-act]');if(!t)return;const f=A[t.dataset.act];if(f)f(t,e)});
+function toast(m){document.querySelectorAll('.toast').forEach(x=>x.remove());const t=document.createElement('div');t.className='toast';t.textContent=m;document.body.appendChild(t);setTimeout(()=>t.remove(),3200)}
+function sheet(html){closeSheet();const w=document.createElement('div');w.className='sheet-wrap';w.innerHTML=`<div class="sheet-bg" data-act="closeSheet"></div><div class="sheet"><div class="grab"></div>${html}</div>`;document.body.appendChild(w);bindFiles(w);hydrate(w);setTimeout(()=>w.classList.add('on'),30);return w.querySelector('.sheet')}
+function closeSheet(){document.querySelectorAll('.sheet-wrap').forEach(x=>x.remove())}
+A.closeSheet=closeSheet;
+function ask(title,msg,btns){return new Promise(res=>{const w=document.createElement('div');w.className='dlg-wrap';w.innerHTML=`<div class="dlg"><h3>${esc(title)}</h3><p>${msg}</p><div class="dlg-btns">${btns.map((b,i)=>`<button class="btn ${b.cls||'ghost'}" data-i="${i}">${esc(b.t)}</button>`).join('')}</div></div>`;w.addEventListener('click',e=>{const b=e.target.closest('[data-i]');if(b){w.remove();res(btns[+b.dataset.i].v)}});document.body.appendChild(w)})}
+const topbar=(title,back='menu',right='')=>`<div class="top">${back?`<button class="icon-btn" data-act="go" data-to="${back}" aria-label="Volver">${ICON.back}</button>`:''}<h1>${esc(title)}</h1>${right}<button class="icon-btn" data-act="go" data-to="menu" aria-label="Inicio">${ICON.home}</button></div>`;
+A.go=t=>{location.hash=t.dataset.to};
+const modChip=m=>m==='virtual'?'<span class="chip vir"><span class="dot vir"></span>Virtual</span>':'<span class="chip pres"><span class="dot pres"></span>Presencial</span>';
+const estChip=o=>{const[t,c]=EST[o.estado];return `<span class="chip ${c}">${t}</span>`};
+
+/* ============ Router ============ */
+function route(){return (location.hash||'#inicio').slice(1)||'inicio'}
+let rzT=null;window.addEventListener('resize',()=>{clearTimeout(rzT);rzT=setTimeout(()=>{if(route()==='calendario')render()},250)});
+window.addEventListener('hashchange',()=>{closeSheet();render();window.scrollTo(0,0)});
+function render(){
+  const app=$('#app');const r=route();
+  if(!Vault.unlocked()){if(!$('#lkF')||app.dataset.lm!==lockMode){app.innerHTML=vLock();app.dataset.lm=lockMode;bindLock()}return}
+  app.dataset.lm='';
+  if(r==='inicio'){app.innerHTML=vWelcome();hydrate(app);return}
+  if(S.err&&!S.ready){app.innerHTML=topbar('Administrador','')+`<div class="wrap"><div class="alert bad">${esc(S.err)}</div></div>`;return}
+  if(!S.ready){app.innerHTML=`<div class="loading">Cargando tus datos…</div>`;return}
+  const v={menu:vMenu,calendario:vCal,pacientes:vPacientes,cuentas:vCuentas,config:vConfig}[r]||vMenu;
+  if(document.querySelector('input[type=file]:focus'))return;
+  app.innerHTML=v()+(S.err?`<div class="wrap" style="margin-top:12px"><div class="alert warn">${esc(S.err)}</div></div>`:'');
+  bindFiles(app);hydrate(app);
+  if(r==='pacientes')bindSearch();
+  if(r==='config')storageInfo();
+}
+
+/* ============ Bienvenida ============ */
+function vWelcome(){
+  const f=S.cfg.fondo;
+  return `<div class="welcome ${f?'':'nophoto'}" data-act="enter" ${f?`data-bgblob="${esc(f)}"`:''}>
+    <div class="w-top"><div class="mark ${(S.cfg.iconoEstilo||(f?'degradado':'blanco'))==='degradado'?'grad':'white'}">${ICON.mCal}</div><h1>Bienvenido a tu administrador psicoanalítico</h1></div>
+    <div class="w-bot">Toca la pantalla para entrar</div>
+  </div>`;
+}
+A.enter=()=>{location.hash='menu'};
+
+/* ============ Menú ============ */
+function vMenu(){
+  const t=today();const hoy=occurrences(t,t).filter(o=>ACT.has(o.estado));
+  const fin=t===lastDay(mesKey(t));
+  const d=new Date();
+  return `<div class="top" style="padding-bottom:0"><div class="grow"></div><button class="icon-btn" data-act="go" data-to="config" aria-label="Configuración">${ICON.gear}</button></div>
+  <div class="hello"><div class="muted">${esc(fmtLong(t))}</div><h2>Hola${cfg('nombre')?', '+esc(cfg('nombre')):''}</h2></div>
+  <div class="wrap stack" style="margin-top:12px">
+    ${!S.cfg.ultimoRespaldo||(Date.now()-new Date(S.cfg.ultimoRespaldo))>7*864e5?`<div class="banner"><span>${S.cfg.ultimoRespaldo?'Hace más de una semana que no respaldas.':'Aún no tienes un respaldo.'} <button class="link" data-act="go" data-to="config">Respaldar en Proton Drive</button></span></div>`:''}
+    ${parseD(t).getDate()===15&&Object.values(S.pac).some(p=>p.pago==='quincenal'&&(!p.fin||p.fin>=t))?`<div class="banner"><b>Hoy es 15:</b> toca cobrar la primera quincena a ${esc(Object.values(S.pac).filter(p=>p.pago==='quincenal'&&(!p.fin||p.fin>=t)).map(p=>first(p.nombre)).join(', '))}. <button class="link" data-act="go" data-to="cuentas">Ver cuentas</button></div>`:''}
+    ${fin?`<div class="banner"><b>Hoy es fin de mes.</b> Toca emitir los recibos en SUNAT. <button class="link" data-act="goRecibos">Ver recibos</button></div>`:''}
+    <div class="card">
+      <div class="row between"><b>Hoy</b><span class="muted small">${hoy.length} ${hoy.length===1?'sesión':'sesiones'}</span></div>
+      ${hoy.length?`<div class="today-list">${hoy.map(o=>`<div class="r" data-act="openSes" data-k="${esc(o.key)}" style="cursor:pointer"><b style="width:78px;white-space:nowrap">${fmtH(o.hora)}</b><span class="dot ${o.modalidad==='virtual'?'vir':'pres'}"></span><span class="grow">${esc(o.p.nombre)}</span></div>`).join('')}</div>`:`<div class="muted small" style="margin-top:6px">No tienes sesiones hoy.</div>`}
+    </div>
+    <div class="card menu-item" data-act="go" data-to="calendario"><div class="ico">${ICON.mCal}</div><div class="grow"><h3>Calendario</h3><div class="muted small">Semana y día con tus pacientes</div></div>${ICON.next.replace('<svg','<svg width="20"')}</div>
+    <div class="card menu-item" data-act="go" data-to="pacientes"><div class="ico">${ICON.mPac}</div><div class="grow"><h3>Pacientes</h3><div class="muted small">${Object.values(S.pac).filter(p=>estadoPac(p,t)==='activo').length} activos${Object.values(S.pac).some(p=>estadoPac(p,t)==='pausa')?` · ${Object.values(S.pac).filter(p=>estadoPac(p,t)==='pausa').length} en pausa`:''}</div></div>${ICON.next.replace('<svg','<svg width="20"')}</div>
+    <div class="card menu-item" data-act="go" data-to="cuentas"><div class="ico">${ICON.mCta}</div><div class="grow"><h3>Cuentas</h3><div class="muted small">Por cobrar · Por pagar · Recibos</div></div>${ICON.next.replace('<svg','<svg width="20"')}</div>
+    ${illo('Escena tranquila de consultorio: diván, planta y una lámpara cálida',120)}
+  </div>`;
+}
+A.goRecibos=()=>{ui.cuentasTab='recibos';ui.recMes=mesKey(today());location.hash='cuentas'};
+
+/* ============ Calendario ============ */
+function vCal(){
+  const c=ui.cal;const isW=c.mode==='semana';
+  let label;
+  if(isW){const m=mondayOf(c.date),e=addD(m,6);const a=parseD(m),b=parseD(e);label=a.getMonth()===b.getMonth()?`${a.getDate()}–${b.getDate()} ${MESES[b.getMonth()].slice(0,3)}`:`${a.getDate()} ${MESES[a.getMonth()].slice(0,3)} – ${b.getDate()} ${MESES[b.getMonth()].slice(0,3)}`}
+  else{const d=parseD(c.date);label=`${D3[dow(c.date)]} ${d.getDate()} ${MESES[d.getMonth()].slice(0,3)}`}
+  return topbar('Calendario','menu',`<button class="btn ghost sm" data-act="calToday">Hoy</button>`)+
+  `<div class="calbar"><div class="seg" style="width:150px;flex:none"><button class="${isW?'on':''}" data-act="calMode" data-m="semana">Semana</button><button class="${!isW?'on':''}" data-act="calMode" data-m="dia">Día</button></div><button class="icon-btn" style="width:36px;height:36px" data-act="calNav" data-n="-1">${ICON.back}</button><div class="lbl" style="text-align:center;font-size:15px">${esc(label)}</div><button class="icon-btn" style="width:36px;height:36px" data-act="calNav" data-n="1">${ICON.next}</button></div>
+  ${isW?vWeek():vDay()}
+  <button class="fab" data-act="addSes" aria-label="Agregar sesión">${ICON.plus}</button>`;
+}
+A.calMode=t=>{ui.cal.mode=t.dataset.m;render()};
+A.calToday=()=>{ui.cal.date=today();render()};
+A.calNav=t=>{ui.cal.date=addD(ui.cal.date,(ui.cal.mode==='semana'?7:1)*+t.dataset.n);render()};
+A.dayView=t=>{ui.cal.date=t.dataset.d;ui.cal.mode='dia';render();window.scrollTo(0,0)};
+function hourRange(occ){let H0=+cfg('hIni'),H1=+cfg('hFin');for(const o of occ){const m=toMin(o.hora);H0=Math.min(H0,Math.floor(m/60));H1=Math.max(H1,Math.ceil((m+50)/60))}return[H0,H1]}
+function vWeek(){
+  const mon=mondayOf(ui.cal.date);const days=[...Array(7)].map((_,i)=>addD(mon,i));
+  const occ=occurrences(days[0],days[6]);const[H0,H1]=hourRange(occ);const RH=Math.max(30,Math.min(54,Math.floor(((window.innerHeight||800)-195)/(H1-H0))));const t=today();
+  const H=(H1-H0)*RH;
+  const lines=`background:repeating-linear-gradient(180deg,transparent 0 ${RH-1}px,var(--line) ${RH-1}px ${RH}px)`;
+  return `<div class="week"><div class="wk-head"><div></div>${days.map(d=>`<div class="${d===t?'today':''}" data-act="dayView" data-d="${d}">${D3[dow(d)]}<b>${parseD(d).getDate()}</b></div>`).join('')}</div>
+  <div class="wk-body"><div class="tcol" style="height:${H}px">${[...Array(H1-H0)].map((_,i)=>`<div style="height:${RH}px">${fmtHh(H0+i)}</div>`).join('')}</div>
+  ${days.map(d=>`<div class="dcol" data-act="emptyTap" data-d="${d}" data-h0="${H0}" data-rh="${RH}" style="height:${H}px;${lines}">${occ.filter(o=>o.fecha===d).map(o=>{const top=(toMin(o.hora)-H0*60)/60*RH;return `<div class="blk ${o.modalidad} st-${o.estado}" data-act="openSes" data-k="${esc(o.key)}" style="top:${top+1}px;height:${50/60*RH-2}px"><b>${esc(first(o.p.nombre))}</b><span style="white-space:nowrap">${fmtHc(o.hora)}</span></div>`}).join('')}</div>`).join('')}
+  </div></div>
+  <div class="wrap row small muted" style="margin-top:10px;gap:14px"><span class="row" style="gap:5px"><span class="dot pres"></span>Presencial</span><span class="row" style="gap:5px"><span class="dot vir"></span>Virtual</span><span>Toca un día para verlo completo</span></div>`;
+}
+A.emptyTap=(t,e)=>{if(e.target.closest('.blk'))return;const r=t.getBoundingClientRect();const y=e.clientY-r.top;const h=+t.dataset.h0+Math.floor(y/+t.dataset.rh);openAdd(t.dataset.d,`${pad(h)}:00`)};
+function vDay(){
+  const d=ui.cal.date;const occ=occurrences(d,d);const[H0,H1]=hourRange(occ);
+  const rows=[];const used=new Set();
+  for(let h=H0;h<H1;h++){
+    const here=occ.filter(o=>Math.floor(toMin(o.hora)/60)===h);
+    here.forEach(o=>used.add(o.key));
+    rows.push(`<div class="slot"><div class="h">${fmtHh(h)}</div><div class="grow">${here.length?here.map(o=>`<div class="scard ${o.modalidad} st-${o.estado}" data-act="openSes" data-k="${esc(o.key)}"><div class="row between"><span class="nm">${esc(o.p.nombre)}</span><b class="small">${fmtH(o.hora)}</b></div><div class="row" style="gap:6px;margin-top:6px;flex-wrap:wrap">${modChip(o.modalidad)}${o.implicit&&o.estado==='programada'?'':estChip(o)}${o.movida?'<span class="chip gray">Reprogramada</span>':''}${o.extra?'<span class="chip gray">Extra</span>':''}${esPrimeraGratis(o)?'<span class="chip ok">1.ª sesión · sin costo</span>':''}</div></div>`).join(''):`<div class="free" data-act="addAt" data-d="${d}" data-h="${pad(h)}:00">Libre · toca para agendar</div>`}</div></div>`);
+  }
+  return `<div class="wrap day-list">${occ.length?'':`<div style="margin-bottom:10px">${illo('Calendario abierto con un reloj suave: día libre',90)}</div>`}${rows.join('')}</div>`;
+}
+A.addAt=t=>openAdd(t.dataset.d,t.dataset.h);
+A.addSes=()=>openAdd(ui.cal.mode==='dia'?ui.cal.date:today(),'');
+
+/* --- hoja de sesión --- */
+A.openSes=t=>openSession(t.dataset.k);
+function openSession(key,panel){
+  const o=findOcc(key);if(!o){toast('No encontré esa sesión.');return}
+  const p=o.p;const hrs=(o.start-new Date())/36e5;const ov=S.ses[key];
+  const pg=pagoDeSesion(key);
+  const other=o.modalidad==='virtual'?'presencial':'virtual';
+  let body='';
+  if(!panel){
+    body=`<div class="stack">
+      <div class="actgrid">
+        <button class="actbtn ${o.estado==='asistio'?'sel':''}" data-act="sesSet" data-k="${esc(key)}" data-e="asistio">✓ Asistió${o.implicit&&o.estado==='asistio'?'<small>marcado por defecto</small>':''}</button>
+        <button class="actbtn ${o.estado==='no_asistio'?'sel':''}" data-act="sesSet" data-k="${esc(key)}" data-e="no_asistio">No asistió<small>se cobra</small></button>
+        <button class="actbtn ${o.estado.startsWith('cancelo')?'sel':''}" data-act="sesPanel" data-k="${esc(key)}" data-p="cancel">Canceló</button>
+        <button class="actbtn" data-act="sesPanel" data-k="${esc(key)}" data-p="move">Reprogramar</button>
+      </div>
+      <button class="btn ghost" data-act="sesMod" data-k="${esc(key)}">Cambiar a ${other} <span class="muted small">(solo esta sesión)</span></button>
+      ${COBRA.has(o.estado)&&p.pago==='sesion'&&costo(o)>0?(pg?`<div class="alert ok">Sesión pagada · ${money(pg.monto)} (${fmtShort(pg.fecha)})</div>`:`<button class="btn soft" data-act="sesPay" data-k="${esc(key)}">Registrar pago de esta sesión · ${money(costo(o))}</button>`):''}
+      <div class="row" style="gap:16px;justify-content:center;margin-top:6px;flex-wrap:wrap">
+        <button class="link" data-act="openPac" data-id="${esc(p.id)}">Ver ficha</button>
+        ${o.extra?`<button class="link" style="color:var(--bad)" data-act="sesDelExtra" data-k="${esc(key)}">Eliminar sesión</button>`:(ov?`<button class="link" style="color:var(--ink2)" data-act="sesReset" data-k="${esc(key)}">Deshacer cambios</button>`:'')}
+      </div></div>`;
+  }else if(panel==='cancel'){
+    const late=hrs<48;
+    body=`<div class="stack"><h3>Cancelación</h3>
+      ${late?`<div class="alert bad"><b>Esta sesión debe ser pagada porque ya estamos dentro de las 48 horas previas a la sesión.</b></div>
+        <button class="btn primary" data-act="sesSet" data-k="${esc(key)}" data-e="cancelo_tarde">Cancelar y cobrar</button>
+        <button class="btn ghost" data-act="sesSet" data-k="${esc(key)}" data-e="cancelo">Cancelar sin cobrar (excepción)</button>`
+      :`<div class="alert ok">Avisó con más de 48 horas de anticipación (faltan ${Math.floor(hrs/24)} días). No se cobra.</div>
+        <button class="btn primary" data-act="sesSet" data-k="${esc(key)}" data-e="cancelo">Confirmar cancelación</button>`}
+      <button class="btn ghost" data-act="openSesK" data-k="${esc(key)}">Volver</button></div>`;
+  }else if(panel==='move'){
+    body=`<div class="stack"><h3>Reprogramar</h3>
+      <div><label class="f">Nueva fecha</label><input class="in" type="date" id="mvF" value="${o.fecha}"></div><div><label class="f">Hora</label>${tp('id="mvH"',o.hora)}</div>
+      ${o.extra?'':`<label class="radio"><input type="radio" name="mvS" value="solo" checked><div><b>Solo esta sesión</b><div class="muted small">El resto de semanas sigue igual.</div></div></label>
+      <label class="radio"><input type="radio" name="mvS" value="todo"><div><b>Cambiar su horario de ahora en adelante</b><div class="muted small">Desde esta semana, todas sus sesiones pasan al nuevo día y hora.</div></div></label>`}
+      ${hrs<48?`<div class="alert warn">Faltan menos de 48 horas para esta sesión.</div>`:''}
+      <button class="btn primary" data-act="sesMove" data-k="${esc(key)}">Continuar</button>
+      <button class="btn ghost" data-act="openSesK" data-k="${esc(key)}">Volver</button></div>`;
+  }
+  sheet(`<div class="row between" style="align-items:flex-start"><div><h2>${esc(p.nombre)}</h2><div class="muted" style="margin-top:2px">${esc(fmtLong(o.fecha))} · ${fmtH(o.hora)} – ${fmtH(fromMin(toMin(o.hora)+50))}</div></div><button class="icon-btn" data-act="closeSheet" aria-label="Cerrar">${ICON.x}</button></div>
+  <div class="row" style="gap:6px;margin:12px 0 16px;flex-wrap:wrap">${modChip(o.modalidad)}${estChip(o)}${o.movida?`<span class="chip gray">Movida desde ${esc(fmtShort(o.fechaOrig))} ${fmtH(o.horaOrig)}</span>`:''}${o.extra?'<span class="chip gray">Sesión extra</span>':''}${esPrimeraGratis(o)?'<span class="chip ok">Primera sesión · sin costo</span>':''}</div>${body}`);
+}
+A.openSesK=t=>openSession(t.dataset.k);
+A.sesPanel=t=>openSession(t.dataset.k,t.dataset.p);
+A.sesSet=async t=>{const o=findOcc(t.dataset.k);const e=t.dataset.e;try{await saveOv(o,{estado:e});closeSheet();toast({asistio:'Marcada: asistió',no_asistio:'Marcada: no asistió (se cobra)',cancelo:'Cancelada sin cobro',cancelo_tarde:'Cancelada · se cobra'}[e])}catch(_){}};
+A.sesMod=async t=>{const o=findOcc(t.dataset.k);const nv=o.modalidad==='virtual'?'presencial':'virtual';try{await saveOv(o,{modalidad:nv===(o.p.modalidad||'presencial')?null:nv});closeSheet();toast('Esta sesión ahora es '+nv)}catch(_){}};
+A.sesReset=async t=>{try{await delDoc('sesiones/'+t.dataset.k);closeSheet();toast('Sesión restablecida')}catch(_){}};
+A.sesDelExtra=async t=>{const ok=await ask('Eliminar sesión','¿Eliminar esta sesión extra?',[{t:'Eliminar',v:true,cls:'danger'},{t:'Volver',v:false}]);if(!ok)return;try{await delDoc('sesiones/'+t.dataset.k);closeSheet();toast('Sesión eliminada')}catch(_){}};
+A.sesPay=async t=>{const o=findOcc(t.dataset.k);const id=newId('pagos');try{await setDoc('pagos/'+id,{pid:o.pid,monto:costo(o),fecha:today(),sesKey:o.key,nota:'Sesión del '+fmtShort(o.fecha)});closeSheet();toast('Pago registrado')}catch(_){}};
+A.sesMove=async t=>{
+  const o=findOcc(t.dataset.k);const f=$('#mvF').value,h=tpVal($('#mvH'));
+  if(!f||!h){toast('Elige fecha y hora');return}
+  const scope=(document.querySelector('input[name=mvS]:checked')||{}).value||'solo';
+  const hrs=(o.start-new Date())/36e5;
+  if(scope==='todo'){
+    if(!await checkWeekly(o.pid,[{dia:dow(f),hora:h}],f))return;
+    const p=clone(o.p);const cur=scheduleAt(p,o.fechaOrig);
+    const slots=(cur?cur.slots:[]).filter(s=>!(+s.dia===dow(o.fechaOrig)&&s.hora===o.horaOrig));slots.push({dia:dow(f),hora:h});
+    const desde=mondayOf(f<o.fechaOrig?f:o.fechaOrig);
+    p.horarios=(p.horarios||[]).filter(x=>x.desde<desde);p.horarios.push({desde,slots});
+    try{await setDoc('pacientes/'+p.id,p);closeSheet();toast(`Nuevo horario: ${DIAS[dow(f)].toLowerCase()} ${fmtH(h)}`)}catch(_){}
+    return;
+  }
+  if(!await checkSlot(f,h,o.key))return;
+  const doMove=async charge=>{
+    try{
+      if(o.extra){await saveOv(o,{fecha:f,hora:h,fechaOrig:f,horaOrig:h,estado:null})}
+      else if(charge){await saveOv(o,{estado:'cancelo_tarde',movedTo:null});const id='x'+newId('sesiones');await setDoc('sesiones/'+id,{extra:true,pid:o.pid,fecha:f,hora:h,fechaOrig:f,horaOrig:h,modalidad:o.modalidad!==(o.p.modalidad||'presencial')?o.modalidad:undefined})}
+      else{await saveOv(o,{movedTo:{fecha:f,hora:h},estado:null})}
+      closeSheet();toast(`Reprogramada para ${fmtShort(f)} ${fmtH(h)}`);
+    }catch(_){}
+  };
+  if(hrs<48&&!o.extra){
+    const r=await ask('Aviso con menos de 48 horas','<b>Esta sesión debe ser pagada porque ya estamos dentro de las 48 horas previas a la sesión.</b><br><br>¿Cómo la registro?',[{t:'Cobrar esta sesión y agendar la nueva aparte',v:'c',cls:'primary'},{t:'Mover sin cobrar (excepción)',v:'m'},{t:'Volver',v:null}]);
+    if(!r)return;await doMove(r==='c');
+  }else await doMove(false);
+};
+
+/* --- agregar sesión --- */
+function openAdd(fecha,hora){
+  const ps=Object.values(S.pac).filter(p=>!p.fin||p.fin>=today()).sort((a,b)=>a.nombre.localeCompare(b.nombre));
+  if(!ps.length){sheet(`<h2>Agregar sesión</h2><p class="muted">Primero agrega un paciente.</p><button class="btn primary" data-act="newPac">Nuevo paciente</button>`);return}
+  sheet(`<div class="row between"><h2>Agregar sesión</h2><button class="icon-btn" data-act="closeSheet">${ICON.x}</button></div>
+  <div class="stack" style="margin-top:14px">
+    <div><label class="f">Paciente</label><select class="in" id="adP">${ps.map(p=>`<option value="${esc(p.id)}">${esc(p.nombre)}</option>`).join('')}</select></div>
+    <div><label class="f">Fecha</label><input class="in" type="date" id="adF" value="${fecha}"></div><div><label class="f">Hora</label>${tp('id="adH"',hora||'09:00')}</div>
+    <label class="radio"><input type="radio" name="adS" value="solo" checked><div><b>Solo esta vez</b><div class="muted small">Una sesión adicional.</div></div></label>
+    <label class="radio"><input type="radio" name="adS" value="semanal"><div><b>Agregar a su horario semanal</b><div class="muted small">Se repite cada semana desde esa fecha.</div></div></label>
+    <button class="btn primary" data-act="addSave">Agregar</button></div>`);
+}
+A.addSave=async()=>{
+  const pid=$('#adP').value,f=$('#adF').value,h=tpVal($('#adH'));if(!f||!h){toast('Elige fecha y hora');return}
+  const scope=document.querySelector('input[name=adS]:checked').value;const p=clone(S.pac[pid]);
+  if(scope==='semanal'){
+    if(!await checkWeekly(pid,[{dia:dow(f),hora:h}],f))return;
+    const cur=scheduleAt(p,f)||scheduleAt(p,'9999-12-31');const slots=(cur?clone(cur.slots):[]);slots.push({dia:dow(f),hora:h});
+    p.horarios=(p.horarios||[]).filter(x=>x.desde<f);p.horarios.push({desde:f,slots});if(!p.inicio||p.inicio>f)p.inicio=f;
+    try{await setDoc('pacientes/'+pid,p);closeSheet();toast('Horario semanal actualizado')}catch(_){}
+  }else{
+    if(!await checkSlot(f,h,null))return;
+    const id='x'+newId('sesiones');
+    try{await setDoc('sesiones/'+id,{extra:true,pid,fecha:f,hora:h,fechaOrig:f,horaOrig:h});closeSheet();toast('Sesión agregada')}catch(_){}
+  }
+};
+
+/* ============ Pacientes ============ */
+function vPacientes(){
+  const t=today();const ps=Object.values(S.pac).sort((a,b)=>a.nombre.localeCompare(b.nombre));
+  const act=ps.filter(p=>estadoPac(p,t)==='activo'),pausa=ps.filter(p=>estadoPac(p,t)==='pausa'),alta=ps.filter(p=>estadoPac(p,t)==='alta');
+  const item=p=>{const h=scheduleAt(p,t)||scheduleAt(p,'9999-12-31');const sl=(h&&h.slots||[]).slice().sort((a,b)=>a.dia-b.dia||a.hora.localeCompare(b.hora));const sd=saldo(p.id);
+    return `<div class="card pitem" data-act="openPac" data-id="${esc(p.id)}" data-name="${esc(p.nombre.toLowerCase())}"><div class="avatar ${p.modalidad==='virtual'?'v':''}">${esc(initials(p.nombre))}</div><div class="grow"><div class="nm">${esc(p.nombre)}</div><div class="muted small">${estadoPac(p,t)==='pausa'?(()=>{const z=pausaActual(p,t);return `En pausa desde ${fmtShort(z.desde)}${z.hasta?` · retoma el ${fmtShort(addD(z.hasta,1))}`:''}`})():estadoPac(p,t)==='alta'?`De alta desde ${fmtShort(p.fin)}`:sl.length?sl.map(s=>`${D3[s.dia]} ${fmtH(s.hora)}`).join(' · '):'Sin horario fijo'}</div></div>${sd>0.009?`<div class="amount due small">${money(sd)}</div>`:''}<div class="pchips"><button data-act="openGen" data-id="${esc(p.id)}">Datos generales</button><button class="cl" data-act="openClin" data-id="${esc(p.id)}">Datos clínicos</button></div></div>`};
+  return topbar('Pacientes')+`<div class="wrap stack">
+    <div class="search">${ICON.search}<input class="in" id="q" placeholder="Buscar paciente" value="${esc(ui.q)}"></div>
+    <button class="btn primary" data-act="newPac">${ICON.plus.replace('<svg','<svg width="18"')} Nuevo paciente</button>
+    ${act.length?act.map(item).join(''):illo('Persona con libreta, sentada: aún no hay pacientes',140)}
+    ${pausa.length?`<div class="sec-title">En pausa</div>${pausa.map(item).join('')}`:''}
+    ${alta.length?`<div class="sec-title">De alta</div>${alta.map(item).join('')}`:''}
+  </div>`;
+}
+function bindSearch(){const i=$('#q');if(!i)return;const f=()=>{ui.q=i.value;const v=i.value.trim().toLowerCase();document.querySelectorAll('.pitem').forEach(el=>{el.style.display=el.dataset.name.includes(v)?'':'none'})};i.addEventListener('input',f);f()}
+A.newPac=()=>openPatient(null);
+A.openPac=t=>openPatient(t.dataset.id);
+
+function openPatient(id){
+  const isNew=!id;const t=today();
+  const p=isNew?{nombre:'',telefono:'',dni:'',ruc:'',emNombre:'',emTel:'',notas:'',modalidad:'presencial',pago:'mensual',inicio:t,horarios:[],tarifas:[{desde:'2000-01-01',monto:cfg('tarifa')}]}:clone(S.pac[id]);
+  if(!p){toast('Paciente no encontrado');return}
+  const cur=scheduleAt(p,t)||scheduleAt(p,'9999-12-31')||{slots:[]};
+  const F={slots:clone(cur.slots||[]),orig:JSON.stringify((cur.slots||[]).map(s=>[+s.dia,s.hora]).sort()),tar:tarifaEn(p,t)};
+  const sd=isNew?0:saldo(id);const mk=mesKey(t);
+  const mesSes=isNew?[]:occurrences(mk+'-01',lastDay(mk)).filter(o=>o.pid===id&&COBRA.has(o.estado));
+  const recs=isNew?[]:Object.values(S.rec).filter(r=>r.pid===id&&r.asset).sort((a,b)=>b.mes.localeCompare(a.mes));
+  const seg=(name,val,opts)=>`<div class="seg" data-seg="${name}">${opts.map(([v,l])=>`<button type="button" class="${val===v?'on':''}" data-v="${v}">${l}</button>`).join('')}</div>`;
+  const sh=sheet(`<div class="row between"><h2>${isNew?'Nuevo paciente':esc(p.nombre)}</h2><button class="icon-btn" data-act="closeSheet">${ICON.x}</button></div>
+  ${isNew?'':pacTabs(id,'gen')}
+  ${isNew?'':`<div class="card" style="margin-top:14px"><div class="row between"><div><div class="muted small">Saldo pendiente</div><div class="big ${sd>0.009?'amount due':''}" style="font-size:26px">${money(Math.max(sd,0))}</div>${sd<-0.009?`<div class="small" style="color:var(--ok)">A favor: ${money(-sd)}</div>`:''}</div><button class="btn soft sm" data-act="openPagos" data-id="${esc(id)}">Pagos</button></div><div class="muted small" style="margin-top:6px">Este mes: ${mesSes.length} ${mesSes.length===1?'sesión':'sesiones'} · ${money(mesSes.reduce((s,o)=>s+costo(o),0))}</div></div>`}
+  <form class="stack" id="pf" style="margin-top:16px" autocomplete="off">
+    <div><label class="f">Nombre de pila *</label><input class="in" name="nombre" value="${esc(p.nombre)}" placeholder="Solo el nombre, sin apellidos" required></div>
+    <div class="grid2"><div><label class="f">Teléfono</label><input class="in" name="telefono" inputmode="tel" value="${esc(p.telefono)}"></div><div><label class="f">DNI</label><input class="in" name="dni" inputmode="numeric" value="${esc(p.dni)}"></div></div>
+    <div><label class="f">RUC</label><input class="in" name="ruc" inputmode="numeric" value="${esc(p.ruc)}"></div>
+    <div class="grid2"><div><label class="f">Contacto de emergencia</label><input class="in" name="emNombre" placeholder="Nombre" value="${esc(p.emNombre)}"></div><div><label class="f">Teléfono emergencia</label><input class="in" name="emTel" inputmode="tel" value="${esc(p.emTel)}"></div></div>
+    <div class="grid2"><div><label class="f">Tarifa por sesión (S/)</label><input class="in" name="tarifa" type="number" min="0" step="1" value="${F.tar}"></div><div><label class="f">Inicio</label><input class="in" name="inicio" type="date" value="${esc(p.inicio||t)}"></div></div>
+    <label class="radio"><input type="checkbox" name="primeraGratis" ${p.primeraGratis?'checked':''}><div><b>Primera sesión</b><div class="muted small">Su primera sesión no se cobra. La tarifa de arriba aplica desde la segunda.</div></div></label>
+    <div id="tarDesde" style="display:none"><label class="f">La nueva tarifa aplica desde</label><input class="in" name="tarDesde" type="date" value="${t.slice(0,8)}01"></div>
+    <div><label class="f">Modalidad habitual</label>${seg('modalidad',p.modalidad||'presencial',[['presencial','Presencial'],['virtual','Virtual']])}</div>
+    <div><label class="f">Forma de pago</label>${seg('pago',p.pago||'mensual',[['sesion','Por sesión'],['quincenal','Quincenal'],['mensual','Mensual']])}</div>
+    <div><label class="f">Horario semanal</label><div id="slots"></div><button type="button" class="btn ghost sm" data-addslot>${ICON.plus.replace('<svg','<svg width="16"')} Agregar día</button></div>
+    <div id="hDesde" style="display:none"><label class="f">El nuevo horario aplica desde</label><input class="in" name="hDesde" type="date" value="${t}"><div class="muted small" style="margin-top:4px">Las semanas anteriores no cambian.</div></div>
+    <div><label class="f">Notas (máx. 100 palabras)</label><textarea class="in" name="notas" rows="4">${esc(p.notas)}</textarea><div class="counter" id="cnt"></div></div>
+    <button class="btn primary" type="submit" id="pfSave">${isNew?'Guardar paciente':'Guardar cambios'}</button>
+    ${isNew?'':`${recs.length?`<div class="sec-title">Recibos</div><div class="card">${recs.map(r=>`<div class="lrow"><div class="grow"><b style="text-transform:capitalize">${esc(mesLabel(r.mes))}</b><div class="muted small">${money(r.monto)} · ${r.enviado?'Enviado':'Por enviar'}</div></div><button type="button" class="btn ghost sm" data-act="recDl" data-id="${esc(r.id)}">Descargar</button></div>`).join('')}</div>`:''}
+    ${p.fin&&p.fin<t?'':(()=>{const z=pausaActual(p,t);return z?`<div class="alert warn">${z.desde<=t?'En pausa desde':'Pausa programada desde'} <b>${esc(fmtLong(z.desde))}</b>${z.hasta?`, retoma el <b>${esc(fmtLong(addD(z.hasta,1)))}</b>`:''}. Mientras tanto no aparecen sus sesiones.</div><button type="button" class="btn primary" data-act="pausaFin" data-id="${esc(id)}">Retomar tratamiento</button>`:`<button type="button" class="btn ghost" data-act="pausaIni" data-id="${esc(id)}">Pausar tratamiento</button>`})()}
+    ${p.fin&&p.fin<t?`<button type="button" class="btn ghost" data-act="pacReactivar" data-id="${esc(id)}">Reactivar paciente</button>`:`<button type="button" class="btn ghost" data-act="pacAlta" data-id="${esc(id)}">Dar de alta (terminar tratamiento)</button>`}
+    <button type="button" class="btn danger" data-act="pacDel" data-id="${esc(id)}">Eliminar paciente</button>`}
+  </form>`);
+  const form=$('#pf',sh);
+  const drawSlots=()=>{$('#slots',sh).innerHTML=F.slots.map((s,i)=>`<div class="slotrow"><select class="in" data-sd="${i}">${[1,2,3,4,5,6,7].map(d=>`<option value="${d}" ${+s.dia===d?'selected':''}>${DIAS[d]}</option>`).join('')}</select>${tp(`data-tpi="${i}"`,s.hora)}<button type="button" class="icon-btn" style="width:48px;height:48px;border-radius:12px" data-rm="${i}" aria-label="Quitar">${ICON.x}</button></div>`).join('')||'<div class="muted small" style="margin-bottom:8px">Sin horario fijo todavía.</div>';chk()};
+  const chk=()=>{const now=JSON.stringify(F.slots.filter(s=>s.hora).map(s=>[+s.dia,s.hora]).sort());$('#hDesde',sh).style.display=(!isNew&&now!==F.orig)?'':'none';
+    $('#tarDesde',sh).style.display=(!isNew&&+form.tarifa.value!==+F.tar)?'':'none';
+    const w=words(form.notas.value);const c=$('#cnt',sh);c.textContent=`${w}/100 palabras`;c.classList.toggle('over',w>100);$('#pfSave',sh).disabled=w>100};
+  sh.addEventListener('click',e=>{const sb=e.target.closest('[data-seg] button');if(sb){sb.parentNode.querySelectorAll('button').forEach(b=>b.classList.toggle('on',b===sb))}
+    if(e.target.closest('[data-addslot]')){F.slots.push({dia:F.slots.length?F.slots[F.slots.length-1].dia%7+1:1,hora:'09:00'});drawSlots()}
+    const rm=e.target.closest('[data-rm]');if(rm){F.slots.splice(+rm.dataset.rm,1);drawSlots()}});
+  sh.addEventListener('change',e=>{if(e.target.dataset.sd!=null)F.slots[+e.target.dataset.sd].dia=+e.target.value;const w=e.target.closest('[data-tpi]');if(w)F.slots[+w.dataset.tpi].hora=tpVal(w);chk()});
+  sh.addEventListener('input',chk);
+  drawSlots();
+  form.addEventListener('submit',async e=>{
+    e.preventDefault();const fd=Object.fromEntries(new FormData(form));
+    if(!fd.nombre.trim()){toast('Escribe el nombre');return}
+    if(words(fd.notas)>100){toast('Las notas tienen más de 100 palabras');return}
+    const segv=n=>sh.querySelector(`[data-seg="${n}"] .on`).dataset.v;
+    const slots=F.slots.filter(s=>s.hora).map(s=>({dia:+s.dia,hora:s.hora}));
+    const np=Object.assign(p,{nombre:fd.nombre.trim(),telefono:fd.telefono.trim(),dni:fd.dni.trim(),ruc:fd.ruc.trim(),emNombre:fd.emNombre.trim(),emTel:fd.emTel.trim(),notas:fd.notas.trim(),primeraGratis:!!fd.primeraGratis,modalidad:segv('modalidad'),pago:segv('pago'),inicio:fd.inicio||t});
+    const changedH=JSON.stringify(slots.map(s=>[s.dia,s.hora]).sort())!==F.orig;
+    const desde=isNew?np.inicio:(fd.hDesde||t);
+    if((isNew||changedH)&&slots.length&&!await checkWeekly(isNew?'__new':id,slots,desde))return;
+    if(isNew){np.horarios=[{desde:'2000-01-01',slots}]}
+    else if(changedH){np.horarios=(np.horarios||[]).filter(x=>x.desde<desde);np.horarios.push({desde,slots})}
+    if(!np.horarios||!np.horarios.length)np.horarios=[{desde:'2000-01-01',slots}];
+    const tar=+fd.tarifa||0;
+    if(isNew)np.tarifas=[{desde:'2000-01-01',monto:tar}];
+    else if(tar!==+F.tar){const td=fd.tarDesde||t;np.tarifas=(np.tarifas||[]).filter(x=>x.desde<td);np.tarifas.push({desde:td,monto:tar})}
+    const pid=isNew?newId('pacientes'):id;np.id=pid;
+    try{await setDoc('pacientes/'+pid,np);closeSheet();toast(isNew?'Paciente guardado':'Cambios guardados')}catch(_){}
+  });
+}
+A.pausaIni=t=>{const id=t.dataset.id;const p=S.pac[id];
+  sheet(`<div class="row between"><h2>Pausar tratamiento</h2><button class="icon-btn" data-act="closeSheet">${ICON.x}</button></div>
+  <p class="muted">${esc(p.nombre)} deja de aparecer en el calendario y en las cuentas mientras dure la pausa. Su ficha, su historial y su saldo se mantienen.</p>
+  <div class="stack"><div><label class="f">Desde</label><input class="in" type="date" id="pzD" value="${today()}"></div>
+  <div><label class="f">Retoma el (opcional)</label><input class="in" type="date" id="pzH"><div class="muted small" style="margin-top:4px">Si no sabes cuándo vuelve, déjalo vacío.</div></div>
+  <button class="btn primary" data-act="pausaSave" data-id="${esc(id)}">Pausar</button><button class="btn ghost" data-act="openPac" data-id="${esc(id)}">Volver</button></div>`)};
+A.pausaSave=async t=>{const p=clone(S.pac[t.dataset.id]);const d=$('#pzD').value||today(),r=$('#pzH').value;
+  if(r&&r<=d){toast('La fecha de retorno debe ser posterior');return}
+  p.pausas=(p.pausas||[]).filter(x=>x.hasta&&x.hasta<d);p.pausas.push(r?{desde:d,hasta:addD(r,-1)}:{desde:d});
+  try{await setDoc('pacientes/'+p.id,p);closeSheet();toast('Tratamiento en pausa')}catch(_){}};
+A.pausaFin=t=>{const id=t.dataset.id;const p=S.pac[id];
+  sheet(`<div class="row between"><h2>Retomar tratamiento</h2><button class="icon-btn" data-act="closeSheet">${ICON.x}</button></div>
+  <p class="muted">Desde esa fecha vuelven sus sesiones con su horario de siempre. Si cambió el horario, edítalo luego en su ficha.</p>
+  <div class="stack"><div><label class="f">Retoma el</label><input class="in" type="date" id="pzR" value="${today()}"></div>
+  <button class="btn primary" data-act="pausaFinSave" data-id="${esc(id)}">Retomar</button><button class="btn ghost" data-act="openPac" data-id="${esc(id)}">Volver</button></div>`)};
+A.pausaFinSave=async t=>{const p=clone(S.pac[t.dataset.id]);const r=$('#pzR').value||today();const z=pausaActual(p);
+  p.pausas=(p.pausas||[]).filter(x=>x!==z&&!(x.desde===z.desde));if(r>z.desde)p.pausas.push({desde:z.desde,hasta:addD(r,-1)});
+  try{await setDoc('pacientes/'+p.id,p);closeSheet();toast('Tratamiento retomado')}catch(_){}};
+A.pacAlta=async t=>{const ok=await ask('Dar de alta','Desde mañana ya no aparecerán sus sesiones en el calendario. Su historial y saldo se mantienen.',[{t:'Dar de alta',v:true,cls:'primary'},{t:'Volver',v:false}]);if(!ok)return;const p=clone(S.pac[t.dataset.id]);p.fin=today();try{await setDoc('pacientes/'+p.id,p);closeSheet();toast('Paciente dado de alta')}catch(_){}};
+A.pacReactivar=async t=>{const p=clone(S.pac[t.dataset.id]);delete p.fin;try{await setDoc('pacientes/'+p.id,p);closeSheet();toast('Paciente reactivado')}catch(_){}};
+A.pacDel=async t=>{const p=S.pac[t.dataset.id];const ok=await ask('Eliminar paciente',`Se borrará a <b>${esc(p.nombre)}</b> con su historial de sesiones y todo su material clínico. Si solo terminó el tratamiento, mejor usa “Dar de alta”.`,[{t:'Eliminar definitivamente',v:true,cls:'danger'},{t:'Volver',v:false,cls:'primary'}]);if(!ok)return;try{await delDoc('pacientes/'+p.id);for(const s of Object.values(S.ses))if(s.pid===p.id)await delDoc('sesiones/'+s.id);for(const m of Object.values(S.mat))if(m.pid===p.id){await delDoc('material/'+m.id);dropFile(m.fileId)}closeSheet();toast('Paciente eliminado')}catch(_){}};
+
+/* --- pagos --- */
+A.openPagos=t=>openPagos(t.dataset.id);
+function openPagos(pid){
+  const p=S.pac[pid];if(!p)return;const sd=saldo(pid);const t=today();
+  const pagos=Object.values(S.pag).filter(x=>x.pid===pid).sort((a,b)=>b.fecha.localeCompare(a.fecha));
+  const meses=[0,-1,-2].map(n=>shiftMes(mesKey(t),n)).map(mk=>{const os=occurrences(mk+'-01',lastDay(mk)).filter(o=>o.pid===pid&&COBRA.has(o.estado));return{mk,n:os.length,m:os.reduce((s,o)=>s+costo(o),0),os}});
+  sheet(`<div class="row between"><h2>${esc(p.nombre)}</h2><button class="icon-btn" data-act="closeSheet">${ICON.x}</button></div>
+  <div class="card" style="margin-top:14px"><div class="muted small">Saldo pendiente</div><div class="big ${sd>0.009?'amount due':''}">${money(Math.max(sd,0))}</div>${sd<-0.009?`<div class="small" style="color:var(--ok)">Saldo a favor: ${money(-sd)}</div>`:''}<div class="muted small" style="margin-top:4px">Paga ${PAGO[p.pago||'mensual'].toLowerCase()}${sd>0.009&&tarifaEn(p,t)?` · equivale a ${Math.round(sd/tarifaEn(p,t)*10)/10} sesiones`:''}</div></div>
+  <div class="sec-title">Registrar pago</div>
+  <div class="stack"><div class="grid2"><div><label class="f">Monto (S/)</label><input class="in" id="pgM" type="number" min="0" step="1" value="${sd>0?Math.round(sd*100)/100:tarifaEn(p,t)}"></div><div><label class="f">Fecha</label><input class="in" id="pgF" type="date" value="${t}"></div></div>
+  <input class="in" id="pgN" placeholder="Nota (opcional), ej. pago parcial de noviembre">
+  <div class="btn ghost filebtn" style="cursor:pointer" id="pgCL"><span>Adjuntar comprobante (foto o captura)</span><input type="file" accept="image/*" id="pgC"></div>
+  <button class="btn primary" data-act="pagoSave" data-id="${esc(pid)}">Guardar pago</button></div>
+  <div class="sec-title">Sesiones cobrables por mes</div>
+  <div class="card">${meses.map(x=>`<div class="lrow"><div class="grow" style="text-transform:capitalize"><b>${esc(mesLabel(x.mk))}</b><div class="muted small" style="text-transform:none">${x.n} ${x.n===1?'sesión':'sesiones'}${x.os.some(o=>o.estado!=='asistio')?` (incluye ${x.os.filter(o=>o.estado!=='asistio').length} falta/cancelación tardía)`:''}</div></div><b>${money(x.m)}</b></div>`).join('')}</div>
+  <div class="sec-title">Pagos registrados</div>
+  <div class="card">${pagos.length?pagos.map(x=>`<div class="lrow">${x.comprobante?`<img class="thumb" data-blob="${esc(x.comprobante)}" alt="Comprobante" data-act="viewComp" data-id="${esc(x.id)}">`:''}<div class="grow"><b>${money(x.monto)}</b><div class="muted small">${esc(fmtShort(x.fecha))}${x.nota?' · '+esc(x.nota):''}</div>${x.comprobante?'':`<div class="link small filebtn" style="cursor:pointer"><span>+ Adjuntar comprobante</span><input type="file" accept="image/*" data-comp="${esc(x.id)}"></div>`}</div><button class="icon-btn" style="width:34px;height:34px" data-act="pagoDel" data-id="${esc(x.id)}" data-p="${esc(pid)}" aria-label="Borrar">${ICON.x}</button></div>`).join(''):'<div class="muted small">Aún no hay pagos.</div>'}</div>`);
+  const ci=$('#pgC');if(ci)ci.addEventListener('change',()=>{const l=$('#pgCL');if(ci.files[0]){l.querySelector('span').textContent='✓ Comprobante listo: '+ci.files[0].name.slice(0,28)}});
+}
+A.pagoSave=async t=>{const pid=t.dataset.id;const m=+$('#pgM').value;if(!(m>0)){toast('Escribe un monto');return}const id=newId('pagos');
+  let comprobante;const f=$('#pgC')&&$('#pgC').files[0];
+  if(f){t.disabled=true;toast('Subiendo comprobante…');try{comprobante=(await uploadImage(f,1800)).id}catch(err){t.disabled=false;toast(upErr(err));return}}
+  try{await setDoc('pagos/'+id,{pid,monto:m,fecha:$('#pgF').value||today(),nota:$('#pgN').value.trim(),comprobante});toast('Pago registrado');setTimeout(()=>openPagos(pid),120)}catch(_){}};
+A.pagoDel=async t=>{const ok=await ask('Borrar pago','¿Borrar este pago registrado?',[{t:'Borrar',v:true,cls:'danger'},{t:'Volver',v:false}]);if(!ok)return;try{await delDoc('pagos/'+t.dataset.id);toast('Pago borrado');setTimeout(()=>openPagos(t.dataset.p),120)}catch(_){}};
+
+/* ============ Cuentas ============ */
+function vCuentas(){
+  const tab=ui.cuentasTab;
+  return topbar('Cuentas')+`<div class="tabs">${[['cobrar','Por cobrar'],['pagar','Por pagar'],['recibos','Recibos']].map(([k,l])=>`<button class="${tab===k?'on':''}" data-act="ctab" data-t="${k}">${l}</button>`).join('')}</div>`+
+  ({cobrar:vCobrar,pagar:vPagar,recibos:vRecibos}[tab])();
+}
+A.ctab=t=>{ui.cuentasTab=t.dataset.t;render()};
+const mesNav=(mk,act)=>`<div class="calbar" style="padding:0 0 12px"><button class="icon-btn" data-act="${act}" data-n="-1">${ICON.back}</button><div class="lbl" style="text-align:center">${esc(mesLabel(mk))}</div><button class="icon-btn" data-act="${act}" data-n="1">${ICON.next}</button></div>`;
+A.mesNav=t=>{ui.mes=shiftMes(ui.mes,+t.dataset.n);render()};
+function vCobrar(){
+  const ps=Object.values(S.pac).map(p=>({p,sd:saldo(p.id)})).sort((a,b)=>b.sd-a.sd);
+  const deben=ps.filter(x=>x.sd>0.009);const total=deben.reduce((s,x)=>s+x.sd,0);
+  const mk=ui.mes;const occ=occurrences(mk+'-01',lastDay(mk)).filter(o=>COBRA.has(o.estado));
+  const mesTotal=occ.reduce((s,o)=>s+costo(o),0);
+  return `<div class="wrap stack">
+    <div class="card"><div class="muted small">Total pendiente de cobro</div><div class="big">${money(total)}</div><div class="muted small">${deben.length} ${deben.length===1?'paciente':'pacientes'} con saldo</div></div>
+    ${deben.length?`<div class="sec-title">Con saldo pendiente</div>${deben.map(({p,sd})=>`<div class="card pitem" data-act="openPagos" data-id="${esc(p.id)}"><div class="avatar ${p.modalidad==='virtual'?'v':''}">${esc(initials(p.nombre))}</div><div class="grow"><div class="nm">${esc(p.nombre)}</div><div class="muted small">${PAGO[p.pago||'mensual']}</div></div><div class="amount due">${money(sd)}</div></div>`).join('')}`:illo('Balanza en equilibrio / alcancía: todo al día',120)}
+    <div class="sec-title">Lo generado por mes</div>
+    ${mesNav(mk,'mesNav')}
+    <div class="card"><div class="row between"><b>Total del mes</b><b>${money(mesTotal)}</b></div><div class="muted small">${occ.length} sesiones cobrables</div>
+    ${Object.values(S.pac).map(p=>{const os=occ.filter(o=>o.pid===p.id);if(!os.length)return'';return `<div class="lrow" data-act="openPagos" data-id="${esc(p.id)}" style="cursor:pointer"><div class="grow"><b>${esc(p.nombre)}</b><div class="muted small">${os.length} ${os.length===1?'sesión':'sesiones'}</div></div><span>${money(os.reduce((s,o)=>s+costo(o),0))}</span></div>`}).join('')}</div>
+  </div>`;
+}
+function vPagar(){
+  const mk=ui.mes;const occ=occurrences(mk+'-01',lastDay(mk)).filter(o=>o.modalidad==='presencial'&&(o.estado==='asistio'||o.estado==='no_asistio'));
+  const realizadas=occ.filter(o=>o.fecha<=today()||!o.implicit);
+  const c=+cfg('consultorio');const total=realizadas.length*c;const pagado=!!(S.cfg.consPagado&&S.cfg.consPagado[mk]);
+  const prog=occurrences(mk+'-01',lastDay(mk)).filter(o=>o.modalidad==='presencial'&&o.estado==='programada').length;
+  const byDay={};realizadas.forEach(o=>{(byDay[o.fecha]=byDay[o.fecha]||[]).push(o)});
+  return `<div class="wrap stack">${mesNav(mk,'mesNav')}
+    <div class="card"><div class="muted small">Consultorio · ${realizadas.length} ${realizadas.length===1?'hora':'horas'} × ${money(c)}</div><div class="big">${money(total)}</div>
+    ${prog?`<div class="muted small">Faltan ${prog} sesiones presenciales programadas este mes (+${money(prog*c)} si se realizan).</div>`:''}
+    <div style="margin-top:12px">${pagado?`<div class="row between"><span class="chip ok">Pagado al consultorio</span><button class="link" data-act="consPay" data-v="0">Desmarcar</button></div>`:`<button class="btn soft" data-act="consPay" data-v="1">Marcar como pagado</button>`}</div></div>
+    <div class="alert info small">Solo cuentan las sesiones presenciales que se realizaron (incluye cuando el paciente no vino, porque igual ocupaste el consultorio). Las virtuales y las canceladas no se pagan.</div>
+    <div class="sec-title">Detalle</div>
+    <div class="card">${Object.keys(byDay).sort().map(d=>`<div class="lrow"><div class="grow"><b>${esc(fmtShort(d))}</b><div class="muted small">${byDay[d].map(o=>`${fmtH(o.hora)} ${esc(first(o.p.nombre))}`).join(' · ')}</div></div><span>${money(byDay[d].length*c)}</span></div>`).join('')||'<div class="muted small">Sin horas de consultorio este mes.</div>'}</div>
+  </div>`;
+}
+A.consPay=async t=>{const mk=ui.mes;const c=clone(S.cfg)||{};c.consPagado=c.consPagado||{};if(t.dataset.v==='1')c.consPagado[mk]=true;else delete c.consPagado[mk];try{await setDoc('config/app',c);toast(t.dataset.v==='1'?'Consultorio marcado como pagado':'Desmarcado')}catch(_){}};
+
+function vRecibos(){
+  const mk=ui.recMes||(()=>{const t=today();return today()===lastDay(mesKey(t))||parseD(t).getDate()>20?mesKey(t):shiftMes(mesKey(t),-1)})();ui.recMes=mk;
+  const occ=occurrences(mk+'-01',lastDay(mk)).filter(o=>COBRA.has(o.estado));
+  const pids=new Set([...occ.map(o=>o.pid),...Object.values(S.rec).filter(r=>r.mes===mk).map(r=>r.pid)]);
+  const items=[...pids].filter(id=>S.pac[id]).map(id=>{const p=S.pac[id];const os=occ.filter(o=>o.pid===id);const monto=os.reduce((s,o)=>s+costo(o),0);return{p,os,monto,r:S.rec[`${id}__${mk}`]}}).sort((a,b)=>a.p.nombre.localeCompare(b.p.nombre));
+  const pend=items.filter(x=>!(x.r&&x.r.enviado)),env=items.filter(x=>x.r&&x.r.enviado);
+  const fin=today()===lastDay(mesKey(today()));
+  const card=x=>{const r=x.r;const rid=`${x.p.id}__${mk}`;return `<div class="card"><div class="row between"><div class="grow"><b>${esc(x.p.nombre)}</b><div class="muted small">${x.os.length} ${x.os.length===1?'sesión':'sesiones'} · ${esc(x.os.map(o=>parseD(o.fecha).getDate()).join(', '))}${x.p.ruc?` · RUC ${esc(x.p.ruc)}`:x.p.dni?` · DNI ${esc(x.p.dni)}`:''}</div></div><div class="amount">${money(x.monto)}</div></div>
+    <div class="row" style="gap:8px;margin-top:12px;flex-wrap:wrap">
+      ${r&&r.asset?`<button class="btn ghost sm" data-act="recDl" data-id="${esc(rid)}">Descargar PDF</button><button class="btn primary sm" data-act="recWa" data-id="${esc(rid)}">WhatsApp</button>${r.enviado?`<button class="link" data-act="recSent" data-id="${esc(rid)}" data-v="0">Marcar como no enviado</button>`:`<button class="btn soft sm" data-act="recSent" data-id="${esc(rid)}" data-v="1">Marcar enviado</button>`}<div class="link small filebtn" style="margin-left:auto"><span>Reemplazar</span><input type="file" accept="application/pdf" data-up="${esc(rid)}" data-m="${x.monto}"></div>`
+      :`<div class="btn primary sm filebtn" style="cursor:pointer"><span>Subir PDF de SUNAT</span><input type="file" accept="application/pdf" data-up="${esc(rid)}" data-m="${x.monto}"></div><button class="btn ghost sm" data-act="copyAmt" data-v="${x.monto}">Copiar monto</button>`}
+    </div>${r&&r.enviado&&r.fechaEnvio?`<div class="muted small" style="margin-top:8px">Enviado el ${esc(fmtShort(r.fechaEnvio))}</div>`:''}</div>`};
+  return `<div class="wrap stack">${mesNav(mk,'recNav')}
+    ${fin?`<div class="banner"><b>Hoy es fin de mes:</b> emite los recibos en SUNAT y súbelos aquí.</div>`:''}
+    <div class="sec-title">Por enviar (${pend.length})</div>
+    ${pend.length?pend.map(card).join(''):`${illo('Sobre cerrado con un documento y un check: todo enviado',110)}`}
+    <div class="sec-title">Enviados (${env.length})</div>
+    ${env.length?env.map(card).join(''):'<div class="muted small">Todavía ninguno este mes.</div>'}
+  </div>`;
+}
+A.recNav=t=>{ui.recMes=shiftMes(ui.recMes,+t.dataset.n);render()};
+A.copyAmt=async t=>{try{await navigator.clipboard.writeText(String(t.dataset.v));toast('Monto copiado')}catch(_){toast('Monto: '+t.dataset.v)}};
+function bindFiles(root){root.querySelectorAll('input[type=file]').forEach(i=>{if(i._b)return;i._b=1;i.addEventListener('change',onFile)})}
+A.pick=t=>{const i=t.querySelector('input[type=file]')||document.getElementById(t.dataset.for);if(i)i.click()};
+async function onFile(e){
+  const i=e.currentTarget;
+  if(i.dataset&&i.dataset.restore!=null){const f=i.files&&i.files[0];i.value='';if(!f)return;const setup=i.dataset.restore==='setup';if(setup&&Vault.unlocked())return;const ok=await restoreFrom(f,{setup});if(ok){if(setup)await afterUnlock();else{location.hash='menu';render()}}return}
+  if(!Vault.unlocked()){toast('La app se bloqueó. Vuelve a entrar.');return}
+  if(i.dataset&&i.dataset.mat!=null){await onMatFiles(i);return}
+  if(i.dataset&&i.dataset.import!=null){const f=i.files&&i.files[0];i.value='';if(f)await importOld(f);return}
+  if(i.dataset&&i.dataset.up!=null&&i.files&&i.files[0]){
+    const file=i.files[0];const rid=i.dataset.up;const[pid,mes]=rid.split('__');
+    toast('Subiendo PDF…');
+    try{const up=await Vault.putFile(file,{type:'application/pdf'});const prev=clone(S.rec[rid])||{};const oldA=prev.asset;
+      await setDoc('recibos/'+rid,Object.assign(prev,{pid,mes,monto:+i.dataset.m||prev.monto||0,asset:up.id,archivo:file.name,subido:today()}));if(oldA)dropFile(oldA);toast('Recibo guardado')}
+    catch(err){toast(err&&err.code==='unsupported_type'?'El archivo debe ser un PDF.':upErr(err))}
+    i.value='';
+  }
+  if(i.dataset&&i.dataset.comp!=null&&i.files&&i.files[0]){
+    const id=i.dataset.comp;toast('Subiendo comprobante…');
+    try{const up=await uploadImage(i.files[0],1800);const x=clone(S.pag[id]);x.comprobante=up.id;await setDoc('pagos/'+id,x);toast('Comprobante guardado');setTimeout(()=>openPagos(x.pid),120)}catch(err){toast(upErr(err))}
+    i.value='';
+  }
+  if(i.dataset&&i.dataset.bg!=null&&i.files&&i.files[0]){
+    toast('Subiendo foto…');
+    try{const up=await uploadImage(i.files[0],2000);const c=clone(S.cfg)||{};const oldF=c.fondo;c.fondo=up.id;if(oldF)dropFile(oldF);await setDoc('config/app',c);toast('Foto de bienvenida actualizada')}catch(err){toast(upErr(err))}
+    i.value='';
+  }
+}
+async function dlRec(rid){
+  const r=S.rec[rid];if(!r||!r.asset)return false;
+  try{const b=await Vault.getFile(r.asset);const p=S.pac[r.pid];return await saveFile(b,`Recibo ${p?p.nombre:''} ${mesLabel(r.mes)}.pdf`)}
+  catch(e){toast('No se pudo descargar el PDF.');return false}
+}
+A.recDl=t=>dlRec(t.dataset.id);
+A.recWa=t=>{
+  const rid=t.dataset.id;const r=S.rec[rid];const p=S.pac[r.pid];
+  const txt=`Hola ${first(p.nombre)}, te envío tu recibo por honorarios de ${mesLabel(r.mes)}.${cfg('nombre')?' Saludos, '+cfg('nombre')+'.':''}`;
+  sheet(`<div class="row between"><h2>Enviar por WhatsApp</h2><button class="icon-btn" data-act="closeSheet">${ICON.x}</button></div>
+  <p class="muted">${esc(p.nombre)} · ${esc(mesLabel(r.mes))}</p>
+  <div class="stack">
+    <div class="card"><b>Lo más rápido:</b> comparte el PDF y elige WhatsApp; el mensaje va incluido.<div style="margin-top:10px"><button class="btn primary" data-act="recShare" data-id="${esc(rid)}">Compartir PDF por WhatsApp</button></div></div>
+    <div class="muted small" style="text-align:center">o a mano:</div>
+    <div class="card"><b>1.</b> Descarga el PDF al celular<div style="margin-top:10px"><button class="btn ghost" data-act="recDl" data-id="${esc(rid)}">Descargar PDF</button></div></div>
+    <div class="card"><b>2.</b> Abre WhatsApp, elige el chat y adjunta el PDF. El mensaje ya va escrito.<div style="margin-top:10px"><a class="btn primary" href="https://wa.me/?text=${encodeURIComponent(txt)}" target="_blank" rel="noopener">Abrir WhatsApp</a></div></div>
+    <div class="card"><b>3.</b> Cuando lo hayas enviado<div style="margin-top:10px"><button class="btn soft" data-act="recSent" data-id="${esc(rid)}" data-v="1">Marcar como enviado</button></div></div>
+  </div>`);
+};
+A.recShare=async t=>{const r=S.rec[t.dataset.id];const p=S.pac[r.pid];try{const b=await Vault.getFile(r.asset);await saveFile(b,`Recibo ${p.nombre} ${mesLabel(r.mes)}.pdf`,{share:true,text:`Hola ${first(p.nombre)}, te envío tu recibo por honorarios de ${mesLabel(r.mes)}.${cfg('nombre')?' Saludos, '+cfg('nombre')+'.':''}`})}catch(_){toast('No se pudo compartir.')}};
+A.recSent=async t=>{const rid=t.dataset.id;const r=clone(S.rec[rid]);r.enviado=t.dataset.v==='1';if(r.enviado)r.fechaEnvio=today();else delete r.fechaEnvio;try{await setDoc('recibos/'+rid,r);closeSheet();toast(r.enviado?'Movido a Enviados':'Movido a Por enviar')}catch(_){}};
+
+/* ============ Imágenes ============ */
+async function toJpeg(file,max){
+  let src;
+  try{src=await createImageBitmap(file)}catch(_){src=await new Promise((res,rej)=>{const u=URL.createObjectURL(file);const im=new Image();im.onload=()=>res(im);im.onerror=()=>rej({code:'decode'});im.src=u})}
+  const w=src.width,h=src.height,k=Math.min(1,max/Math.max(w,h));const c=document.createElement('canvas');c.width=Math.round(w*k);c.height=Math.round(h*k);
+  c.getContext('2d').drawImage(src,0,0,c.width,c.height);
+  return await new Promise((res,rej)=>c.toBlob(b=>b?res(b):rej({code:'encode'}),'image/jpeg',0.86));
+}
+async function uploadImage(file,max){
+  let blob;try{blob=await toJpeg(file,max)}catch(e){if(/^image\/(png|jpeg|webp|gif)$/.test(file.type))blob=file;else throw{code:'decode'}}
+  return Vault.putFile(blob,{type:blob.type||'image/jpeg'});
+}
+const upErr=e=>{const c=e&&e.code;return e&&e.name==='QuotaExceededError'?'El teléfono no tiene espacio suficiente.':c==='decode'?'No pude leer esa imagen. Si es formato HEIC, toma una captura de pantalla de la foto y súbela.':c==='too_large'?'El archivo es muy grande (máx. 20 MB).':c==='unsupported_type'?'Ese tipo de archivo no se acepta.':c==='quota_or_state'?'Se llenó el espacio de archivos de la app.':`No se pudo subir el archivo (código: ${c||'desconocido'}). Inténtalo otra vez.`};
+A.viewComp=t=>{const id=t.dataset.id;const x=S.pag[id];if(!x||!x.comprobante)return;const p=S.pac[x.pid];
+  sheet(`<div class="row between"><h2>Comprobante</h2><button class="icon-btn" data-act="closeSheet">${ICON.x}</button></div><p class="muted">${esc(p?p.nombre:'')} · ${money(x.monto)} · ${esc(fmtShort(x.fecha))}</p>
+  <img data-blob="${esc(x.comprobante)}" alt="Comprobante de pago" style="width:100%;border-radius:14px;background:#fff">
+  <div class="stack" style="margin-top:14px"><button class="btn ghost" data-act="compDl" data-id="${esc(id)}">Descargar imagen</button><button class="btn ghost" data-act="openPagos" data-id="${esc(x.pid)}">Volver a pagos</button></div>`)};
+A.compDl=async t=>{const x=S.pag[t.dataset.id];try{const b=await Vault.getFile(x.comprobante);await saveFile(b,`Comprobante ${(S.pac[x.pid]||{}).nombre||''} ${x.fecha}.jpg`)}catch(e){toast('No se pudo descargar.')}};
+
+/* ============ Material de sesiones (Datos clínicos) ============ */
+const AUDIO_EXT=/\.(m4a|mp3|aac|amr|3gp|3ga|ogg|oga|opus|wav|webm|flac)$/i;
+const MIME={m4a:'audio/mp4',mp3:'audio/mpeg',aac:'audio/aac',amr:'audio/amr','3gp':'audio/3gpp','3ga':'audio/3gpp',ogg:'audio/ogg',oga:'audio/ogg',opus:'audio/ogg',wav:'audio/wav',webm:'audio/webm',flac:'audio/flac',txt:'text/plain',doc:'application/msword',docx:'application/vnd.openxmlformats-officedocument.wordprocessingml.document',rtf:'application/rtf',odt:'application/vnd.oasis.opendocument.text',pdf:'application/pdf'};
+const extOf=n=>((n||'').match(/\.([a-z0-9]+)$/i)||[])[1]?.toLowerCase()||'';
+const mimeOf=(name,type)=>type||MIME[extOf(name)]||'application/octet-stream';
+const isAudio=(name,type)=>/^audio\//.test(type||'')||AUDIO_EXT.test(name||'');
+const fmtSize=n=>n>1048576?(n/1048576).toFixed(1).replace('.',',')+' MB':Math.max(1,Math.round(n/1024))+' KB';
+const MI={
+ audio:'<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg>',
+ texto:'<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h6"/></svg>',
+ nota:'<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>',
+ rec:'<svg viewBox="0 0 24 24" width="22" height="22"><circle cx="12" cy="12" r="7" fill="#E5484D"/></svg>',
+ lock:'<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>',
+};
+function pacTabs(id,on){return `<div class="seg" style="margin-top:14px"><button class="${on==='gen'?'on':''}" data-act="pacTab" data-id="${esc(id)}" data-t="gen">Datos generales</button><button class="${on==='clin'?'on':''}" data-act="pacTab" data-id="${esc(id)}" data-t="clin">Datos clínicos</button></div>`}
+A.pacTab=t=>t.dataset.t==='clin'?openClinical(t.dataset.id):openPatient(t.dataset.id);
+A.openClin=(t,e)=>{e.stopPropagation();openClinical(t.dataset.id)};
+A.openGen=(t,e)=>{e.stopPropagation();openPatient(t.dataset.id)};
+function lastSessionDate(pid){const t=today();const os=occurrences(addD(t,-45),t).filter(o=>o.pid===pid&&o.fecha<=t&&(COBRA.has(o.estado)||o.estado==='programada'));return os.length?os[os.length-1].fecha:t}
+function openClinical(pid){
+  const p=S.pac[pid];if(!p){toast('Paciente no encontrado');return}
+  const items=Object.values(S.mat).filter(m=>m.pid===pid).sort((a,b)=>b.fecha.localeCompare(a.fecha)||(b.creado||'').localeCompare(a.creado||''));
+  const groups={};items.forEach(m=>{(groups[m.fecha]=groups[m.fecha]||[]).push(m)});
+  if(!ui.matFecha||ui.matPid!==pid){ui.matFecha=lastSessionDate(pid);ui.matPid=pid}
+  const row=m=>`<div class="lrow" data-act="openMat" data-id="${esc(m.id)}" style="cursor:pointer"><div class="mico ${m.tipo}">${MI[m.tipo]||MI.texto}</div><div class="grow"><b style="display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(m.nombre)}</b><div class="muted small">${m.tipo==='audio'?'Audio':m.tipo==='nota'?'Nota escrita aquí':'Texto'}${m.size?' · '+fmtSize(m.size):''}${m.resumen?' · '+esc(m.resumen.slice(0,40)):''}</div></div>${ICON.next.replace('<svg','<svg width="18"')}</div>`;
+  sheet(`<div class="row between"><h2>${esc(p.nombre)}</h2><button class="icon-btn" data-act="closeSheet" aria-label="Cerrar">${ICON.x}</button></div>
+  ${pacTabs(pid,'clin')}
+  <div class="sec-title">Material de sesiones</div>
+  <div class="alert info small row" style="gap:8px;align-items:flex-start"><span style="flex:none;margin-top:1px">${MI.lock}</span><span>Tus audios y escritos después de cada sesión. Se guardan solo en este teléfono, cifrados.</span></div>
+  <div class="stack" style="margin-top:12px">
+    <div><label class="f">Sesión del día</label><input class="in" type="date" id="matF" value="${esc(ui.matFecha)}"></div>
+    <div class="actgrid">
+      <div class="actbtn filebtn">${MI.audio}Adjuntar audio<small>de la Grabadora</small><input type="file" multiple accept="audio/*,.m4a,.mp3,.aac,.amr,.3gp,.ogg,.opus,.wav" data-mat="${esc(pid)}"></div>
+      <div class="actbtn filebtn">${MI.texto}Texto o Word<small>.docx · .doc · .txt</small><input type="file" multiple accept=".txt,.doc,.docx,.rtf,.odt,.pdf,text/plain,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/pdf" data-mat="${esc(pid)}"></div>
+      <button class="actbtn" data-act="matRec" data-id="${esc(pid)}">${MI.rec}Grabar aquí<small>sin salir de la app</small></button>
+      <button class="actbtn" data-act="matNote" data-id="${esc(pid)}">${MI.nota}Escribir nota<small>directo en la app</small></button>
+    </div>
+  </div>
+  ${items.length?Object.keys(groups).map(f=>`<div class="sec-title" style="text-transform:none;letter-spacing:0;font-size:14px;color:var(--ink2)">${esc(fmtLong(f))}${parseD(f).getFullYear()!==new Date().getFullYear()?' '+parseD(f).getFullYear():''}</div><div class="card" style="padding:4px 14px">${groups[f].map(row).join('')}</div>`).join(''):`<div class="muted small" style="margin-top:18px;text-align:center">Aún no hay material para ${esc(first(p.nombre))}.</div>`}
+  <div class="muted small" style="margin-top:18px;text-align:center">Consejo: también puedes ir a la Grabadora, tocar <b>Compartir</b> y elegir <b>Consultorio</b>.</div>`);
+  const fi=$('#matF');if(fi)fi.addEventListener('change',()=>{ui.matFecha=fi.value||today()});
+}
+async function addMat(pid,fecha,blob,nombre,extra={}){
+  const type=mimeOf(nombre,blob.type);const tipo=isAudio(nombre,type)?'audio':'texto';
+  const up=await Vault.putFile(blob,{type});const id=newId();
+  await setDoc('material/'+id,Object.assign({pid,fecha,tipo,nombre,mime:type,size:blob.size,fileId:up.id,creado:new Date().toISOString()},extra));return id;
+}
+async function onMatFiles(i){
+  const pid=i.dataset.mat;const fecha=($('#matF')&&$('#matF').value)||ui.matFecha||today();const fs=[...i.files];i.value='';
+  if(!fs.length)return;toast(fs.length>1?`Guardando ${fs.length} archivos…`:'Guardando…');
+  let n=0;for(const f of fs){try{await addMat(pid,fecha,f,f.name||'archivo');n++}catch(e){dbFail(e)}}
+  if(n)toast(n===1?'Guardado y cifrado':`${n} archivos guardados y cifrados`);openClinical(pid);
+}
+/* --- grabar dentro de la app --- */
+A.matRec=async t=>{
+  const pid=t.dataset.id;const fecha=($('#matF')&&$('#matF').value)||today();
+  if(!navigator.mediaDevices||!window.MediaRecorder){toast('Este teléfono no permite grabar desde la app. Usa la Grabadora.');return}
+  let stream;try{stream=await navigator.mediaDevices.getUserMedia({audio:true})}catch(_){toast('No se pudo usar el micrófono. Revisa el permiso de la app.');return}
+  const mime=['audio/webm;codecs=opus','audio/mp4','audio/webm','audio/ogg;codecs=opus'].find(m=>MediaRecorder.isTypeSupported&&MediaRecorder.isTypeSupported(m))||'';
+  const rec=new MediaRecorder(stream,mime?{mimeType:mime}:{});const chunks=[];rec.ondataavailable=e=>{if(e.data&&e.data.size)chunks.push(e.data)};
+  const t0=Date.now();ui.recording=true;
+  const sh=sheet(`<h2>Grabando reflexión</h2><div class="muted">${esc(S.pac[pid].nombre)} · ${esc(fmtLong(fecha))}</div>
+    <div class="row" style="justify-content:center;gap:10px;margin:28px 0"><span class="recdot"></span><span class="big" id="recT">0:00</span></div>
+    <div class="stack"><button class="btn primary" id="recStop">Detener y guardar</button><button class="btn ghost" id="recCancel">Descartar</button></div>`);
+  sh.parentNode.querySelector('.sheet-bg').removeAttribute('data-act');
+  const iv=setInterval(()=>{const s=Math.floor((Date.now()-t0)/1000);const el=$('#recT');if(el)el.textContent=`${Math.floor(s/60)}:${pad(s%60)}`},500);
+  const stop=save=>{clearInterval(iv);rec.onstop=async()=>{stream.getTracks().forEach(x=>x.stop());ui.recording=false;
+    if(save&&chunks.length){const type=(rec.mimeType||'audio/webm').split(';')[0];const ext=type.includes('mp4')?'m4a':type.includes('ogg')?'ogg':'webm';const d=new Date();
+      try{await addMat(pid,fecha,new Blob(chunks,{type}),`Reflexión ${fmtShort(fecha)} ${pad(d.getHours())}.${pad(d.getMinutes())}.${ext}`);toast('Grabación guardada y cifrada')}catch(e){dbFail(e)}}
+    openClinical(pid)};try{rec.stop()}catch(_){openClinical(pid)}};
+  $('#recStop',sh).onclick=()=>stop(true);$('#recCancel',sh).onclick=()=>stop(false);
+  rec.start(1000);
+};
+/* --- nota escrita en la app --- */
+A.matNote=t=>openNote(t.dataset.id,null);
+function openNote(pid,mid){
+  const m=mid?S.mat[mid]:null;const fecha=m?m.fecha:(($('#matF')&&$('#matF').value)||today());
+  sheet(`<div class="row between"><h2>${m?'Nota':'Nueva nota'}</h2><button class="icon-btn" data-act="closeSheet">${ICON.x}</button></div>
+  <div class="stack" style="margin-top:14px">
+    <div><label class="f">Título</label><input class="in" id="ntT" value="${esc(m?m.nombre:'Notas de la sesión')}"></div>
+    <div><label class="f">Sesión del día</label><input class="in" type="date" id="ntF" value="${esc(fecha)}"></div>
+    <div><label class="f">Texto</label><textarea class="in" id="ntX" style="min-height:260px">${esc(m?m.texto:'')}</textarea></div>
+    <button class="btn primary" data-act="noteSave" data-pid="${esc(pid)}" data-id="${esc(mid||'')}">Guardar</button>
+    <button class="btn ghost" data-act="backClin" data-id="${esc(pid)}">Volver</button>
+    ${m?`<button class="btn danger" data-act="matDel" data-id="${esc(mid)}">Eliminar nota</button>`:''}
+  </div>`);
+}
+A.backClin=t=>openClinical(t.dataset.id);
+A.noteSave=async t=>{const pid=t.dataset.pid,mid=t.dataset.id;const x=$('#ntX').value;if(!x.trim()){toast('La nota está vacía');return}
+  const prev=mid?clone(S.mat[mid]):{pid,tipo:'nota',creado:new Date().toISOString()};
+  Object.assign(prev,{nombre:$('#ntT').value.trim()||'Nota',fecha:$('#ntF').value||today(),texto:x,resumen:x.trim().slice(0,60)});
+  try{await setDoc('material/'+(mid||newId()),prev);toast('Nota guardada');openClinical(pid)}catch(_){}};
+/* --- ver un material --- */
+A.openMat=t=>openMat(t.dataset.id);
+async function openMat(id){
+  const m=S.mat[id];if(!m)return;if(m.tipo==='nota'){openNote(m.pid,id);return}
+  const p=S.pac[m.pid];
+  const sh=sheet(`<div class="row between" style="align-items:flex-start"><div class="grow"><h2 style="word-break:break-word">${esc(m.nombre)}</h2><div class="muted" style="margin-top:2px">${esc(p?p.nombre:'')} · sesión del ${esc(fmtLong(m.fecha))}</div></div><button class="icon-btn" data-act="closeSheet">${ICON.x}</button></div>
+  <div id="matView" style="margin-top:16px"><div class="muted small">Abriendo…</div></div>
+  <div class="stack" style="margin-top:16px">
+    <div class="grid2"><div><label class="f">Título</label><input class="in" id="mtN" value="${esc(m.nombre)}"></div><div><label class="f">Sesión del día</label><input class="in" type="date" id="mtF" value="${esc(m.fecha)}"></div></div>
+    <button class="btn primary" data-act="matSave" data-id="${esc(id)}">Guardar cambios</button>
+    <button class="btn ghost" data-act="backClin" data-id="${esc(m.pid)}">Volver al material</button>
+    <button class="btn ghost" data-act="matOut" data-id="${esc(id)}">Abrir con otra app</button>
+    <button class="btn danger" data-act="matDel" data-id="${esc(id)}">Eliminar</button>
+  </div>`);
+  const v=$('#matView',sh);
+  try{
+    const b=await Vault.getFile(m.fileId);if(!b){v.innerHTML='<div class="alert bad small">No encontré el archivo.</div>';return}
+    if(m.tipo==='audio'){const u=await fileURL(m.fileId);v.innerHTML=`<audio controls preload="metadata" src="${u}" style="width:100%"></audio><div class="muted small" style="margin-top:6px">${fmtSize(m.size||b.size)}</div>`;
+      v.querySelector('audio').addEventListener('error',()=>{v.insertAdjacentHTML('beforeend','<div class="alert warn small" style="margin-top:8px">Este formato no se puede reproducir aquí. Usa “Abrir con otra app”.</div>')})}
+    else{const txt=await docText(b,m.nombre,m.mime);
+      v.innerHTML=txt!=null?`<div class="card doctext">${esc(txt.trim())||'<span class="muted">(documento vacío)</span>'}</div>`:`<div class="alert info small">Este tipo de archivo (${esc(extOf(m.nombre)||'desconocido')}) no se puede mostrar dentro de la app. Está guardado y cifrado. Para leerlo, usa “Abrir con otra app”.</div>`}
+  }catch(e){v.innerHTML='<div class="alert bad small">No se pudo abrir el archivo.</div>'}
+}
+A.matSave=async t=>{const m=clone(S.mat[t.dataset.id]);m.nombre=$('#mtN').value.trim()||m.nombre;m.fecha=$('#mtF').value||m.fecha;try{await setDoc('material/'+m.id,m);toast('Guardado');openClinical(m.pid)}catch(_){}};
+A.matDel=async t=>{const m=S.mat[t.dataset.id];const ok=await ask('Eliminar','¿Eliminar este material? No se puede deshacer.',[{t:'Eliminar',v:true,cls:'danger'},{t:'Volver',v:false}]);if(!ok)return;try{await delDoc('material/'+m.id);dropFile(m.fileId);toast('Eliminado');openClinical(m.pid)}catch(_){}};
+A.matOut=async t=>{const m=S.mat[t.dataset.id];
+  const ok=await ask('Abrir con otra app','La otra app recibirá una <b>copia sin cifrar</b> de este archivo. Si queda guardada en Descargas, bórrala después de leerla.',[{t:'Continuar',v:true,cls:'primary'},{t:'Volver',v:false}]);if(!ok)return;
+  const b=await Vault.getFile(m.fileId);if(b)saveFile(b,m.nombre,{share:true})};
+/* lector de .docx / .odt / .txt / .rtf sin librerías */
+async function unzipEntry(blob,name){
+  const buf=new Uint8Array(await blob.arrayBuffer());const dv=new DataView(buf.buffer);
+  let e=buf.length-22;while(e>=0&&dv.getUint32(e,true)!==0x06054b50)e--;if(e<0)return null;
+  const n=dv.getUint16(e+10,true);let p=dv.getUint32(e+16,true);const td=new TextDecoder();
+  for(let i=0;i<n;i++){
+    const method=dv.getUint16(p+10,true),csize=dv.getUint32(p+20,true),nl=dv.getUint16(p+28,true),xl=dv.getUint16(p+30,true),cl=dv.getUint16(p+32,true),lho=dv.getUint32(p+42,true);
+    const fn=td.decode(buf.subarray(p+46,p+46+nl));
+    if(fn===name){const s=lho+30+dv.getUint16(lho+26,true)+dv.getUint16(lho+28,true);const data=buf.subarray(s,s+csize);
+      if(method===0)return td.decode(data);
+      return await new Response(new Blob([data]).stream().pipeThrough(new DecompressionStream('deflate-raw'))).text()}
+    p+=46+nl+xl+cl;
+  }
+  return null;
+}
+function xmlText(xml,para,run){
+  const d=new DOMParser().parseFromString(xml,'application/xml');const out=[];
+  const walk=(n,acc)=>{for(const c of n.childNodes){if(c.nodeType===3){if(run==='*')acc.push(c.nodeValue)}else if(c.nodeType===1){const t=c.nodeName;
+    if(t===run)acc.push(c.textContent);else if(t==='w:tab'||t==='text:tab')acc.push('\t');else if(t==='w:br'||t==='w:cr'||t==='text:line-break')acc.push('\n');else if(t==='text:s')acc.push(' ');else walk(c,acc)}}};
+  for(const p of d.getElementsByTagName('*'))if(para.includes(p.nodeName)&&!(p.parentNode&&para.includes(p.parentNode.nodeName))){const acc=[];walk(p,acc);out.push(acc.join(''))}
+  return out.join('\n');
+}
+async function docText(blob,name,mime){
+  const ext=extOf(name);
+  if(ext==='docx'||/wordprocessingml/.test(mime)){const x=await unzipEntry(blob,'word/document.xml');return x==null?null:xmlText(x,['w:p'],'w:t')}
+  if(ext==='odt'||/opendocument\.text/.test(mime)){const x=await unzipEntry(blob,'content.xml');return x==null?null:xmlText(x,['text:p','text:h'],'*')}
+  if(ext==='txt'||/^text\/plain/.test(mime))return await blob.text();
+  if(ext==='rtf'||/rtf/.test(mime)){const r=await blob.text();return r.replace(/\\par[d]?/g,'\n').replace(/\{\\\*[^{}]*\}/g,'').replace(/\\'([0-9a-f]{2})/gi,(_,h)=>String.fromCharCode(parseInt(h,16))).replace(/\\[a-z]+-?\d* ?/gi,'').replace(/[{}]/g,'')}
+  return null;
+}
+
+/* ============ Archivos compartidos desde otras apps ============ */
+async function checkInbox(){
+  let items=[];try{items=await Vault.inbox()}catch(_){return}
+  if(!items.length)return;
+  const ps=Object.values(S.pac).filter(p=>estadoPac(p)!=='alta').sort((a,b)=>a.nombre.localeCompare(b.nombre));
+  if(!ps.length){toast('Recibiste archivos, pero primero agrega un paciente.');return}
+  sheet(`<h2>Guardar ${items.length===1?'archivo recibido':items.length+' archivos recibidos'}</h2>
+  <div class="card" style="margin-top:12px;padding:4px 14px">${items.map(it=>`<div class="lrow"><div class="mico ${isAudio(it.name,it.type)?'audio':'texto'}">${isAudio(it.name,it.type)?MI.audio:MI.texto}</div><div class="grow"><b style="word-break:break-word">${esc(it.name)}</b><div class="muted small">${fmtSize(it.data.byteLength)}</div></div></div>`).join('')}</div>
+  <div class="stack" style="margin-top:14px">
+    <div><label class="f">Paciente</label><select class="in" id="ibP">${ps.map(p=>`<option value="${esc(p.id)}">${esc(p.nombre)}</option>`).join('')}</select></div>
+    <div><label class="f">Sesión del día</label><input class="in" type="date" id="ibF" value="${today()}"></div>
+    <button class="btn primary" data-act="ibSave">Guardar en Material de sesiones</button>
+    <button class="btn ghost" data-act="ibDrop">Descartar</button>
+  </div>`);
+  const sel=$('#ibP');const upd=()=>{$('#ibF').value=lastSessionDate(sel.value)};sel.addEventListener('change',upd);upd();
+}
+A.ibSave=async()=>{const pid=$('#ibP').value,f=$('#ibF').value||today();const items=await Vault.inbox();let n=0;
+  for(const it of items){try{await addMat(pid,f,new Blob([it.data],{type:mimeOf(it.name,it.type)}),it.name);await Vault.inboxDel(it.key);n++}catch(e){dbFail(e)}}
+  toast(`${n} ${n===1?'archivo guardado':'archivos guardados'} y cifrado${n===1?'':'s'}`);ui.matPid=null;openClinical(pid)};
+A.ibDrop=async()=>{for(const it of await Vault.inbox())await Vault.inboxDel(it.key);closeSheet();toast('Descartado')};
+
+/* ============ Configuración ============ */
+function vConfig(){
+  const c=S.cfg;const last=c.ultimoRespaldo;
+  return topbar('Configuración')+`<div class="wrap stack">
+  <div class="sec-title">General</div>
+  <div class="card stack">
+    <div><label class="f">Tu nombre (para el saludo)</label><input class="in" id="cNom" value="${esc(cfg('nombre'))}"></div>
+    <div class="grid2"><div><label class="f">Tarifa por defecto (S/)</label><input class="in" id="cTar" type="number" value="${cfg('tarifa')}"></div><div><label class="f">Consultorio por hora (S/)</label><input class="in" id="cCons" type="number" value="${cfg('consultorio')}"></div></div>
+    <div class="grid2"><div><label class="f">Calendario desde</label><input class="in" id="cH0" type="number" min="0" max="23" value="${cfg('hIni')}"></div><div><label class="f">hasta (hora)</label><input class="in" id="cH1" type="number" min="1" max="24" value="${cfg('hFin')}"></div></div>
+    <div class="muted small">La tarifa por defecto se usa para pacientes nuevos. Para cambiar la de un paciente, edítala en su ficha.</div>
+    <button class="btn primary" data-act="cfgSave">Guardar</button>
+  </div>
+  <div class="sec-title">Respaldo en Proton Drive</div>
+  <div class="card stack">
+    <div class="small">Crea un archivo con <b>todo</b> (pacientes, cuentas, audios y escritos), cifrado con tu contraseña. Luego eliges <b>Proton Drive</b> en el menú Compartir. Sin tu contraseña nadie puede abrirlo, ni siquiera Proton.</div>
+    ${last?`<div class="muted small">Último respaldo: ${esc(new Date(last).toLocaleString('es-PE',{dateStyle:'medium',timeStyle:'short'}))}</div>`:'<div class="muted small">Aún no hay respaldos.</div>'}
+    ${!last||(Date.now()-new Date(last))>7*864e5?'<div class="alert warn small">Haz un respaldo: si pierdes o cambias el teléfono, es la única copia.</div>':''}
+    <button class="btn primary" data-act="bkMake" data-m="share">Respaldar y enviar a Proton Drive</button>
+    <button class="btn ghost" data-act="bkMake" data-m="dl">Guardar el respaldo en Descargas</button>
+    <div class="btn ghost filebtn"><span>Restaurar desde un respaldo</span><input type="file" data-restore="1"></div>
+  </div>
+  <div class="sec-title">Seguridad</div>
+  <div class="card stack">
+    <div><label class="f">Bloquear la app tras</label><div class="seg">${[1,5,15,30].map(m=>`<button class="${+cfg('bloqueo')===m?'on':''}" data-act="cfgLock" data-v="${m}">${m} min</button>`).join('')}</div><div class="muted small" style="margin-top:6px">Sin usarla o en segundo plano. Al volver te pide la contraseña.</div></div>
+    <button class="btn ghost" data-act="pwChange">Cambiar contraseña</button>
+    <button class="btn ghost" data-act="lockNow">${MI.lock} Bloquear ahora</button>
+    <div class="muted small" id="stInfo"></div>
+  </div>
+  <div class="sec-title">Pantalla de bienvenida</div>
+  <div class="card stack">
+    ${c.fondo?`<div data-bgblob="${esc(c.fondo)}" style="height:140px;border-radius:14px;background:#eee center/cover"></div>`:illo('Aún no hay foto: se ve un degradado naranja-rosa',90)}
+    <div class="btn ghost filebtn"><span>${c.fondo?'Cambiar foto':'Elegir foto'}</span><input type="file" accept="image/*" data-bg="1"></div>
+    ${c.fondo?`<button class="link" data-act="bgDel">Quitar foto</button>`:''}
+    <div><label class="f">Círculo del ícono</label><div class="seg">${[['degradado','Degradado'],['blanco','Blanco']].map(([v,l])=>`<button class="${(c.iconoEstilo||(c.fondo?'degradado':'blanco'))===v?'on':''}" data-act="iconStyle" data-v="${v}">${l}</button>`).join('')}</div></div>
+  </div>
+  <div class="sec-title">Traer datos de la versión anterior</div>
+  <div class="card stack">
+    <div class="small">En la app anterior (claude.ai) ve a Configuración → <b>Descargar copia al celular</b>. Luego elige ese archivo aquí. Las fotos de comprobantes y los PDF de recibos no venían en esa copia.</div>
+    <div class="btn ghost filebtn"><span>Elegir archivo .json</span><input type="file" accept=".json,application/json" data-import="1"></div>
+  </div>
+  <div class="muted small" style="text-align:center;margin:10px 0 30px">Todo se guarda solo en este teléfono, cifrado. La app no envía tus datos a ningún servidor.</div>
+  </div>`;
+}
+async function storageInfo(){const el=$('#stInfo');if(!el)return;try{const e=await navigator.storage.estimate();const p=navigator.storage.persisted?await navigator.storage.persisted():false;el.innerHTML=`Espacio usado: ${fmtSize(e.usage||0)}${p?' · Protegido contra borrado automático':''}`}catch(_){}}
+A.cfgSave=async()=>{const c=clone(S.cfg)||{};c.nombre=$('#cNom').value.trim();c.tarifa=+$('#cTar').value||DEF.tarifa;c.consultorio=+$('#cCons').value||0;c.hIni=Math.max(0,Math.min(23,+$('#cH0').value||DEF.hIni));c.hFin=Math.max(c.hIni+1,Math.min(24,+$('#cH1').value||DEF.hFin));try{await setDoc('config/app',c);toast('Guardado')}catch(_){}};
+A.cfgLock=async t=>{const c=clone(S.cfg)||{};c.bloqueo=+t.dataset.v;try{await setDoc('config/app',c);bump()}catch(_){}};
+A.iconStyle=async t=>{const c=clone(S.cfg)||{};c.iconoEstilo=t.dataset.v;try{await setDoc('config/app',c);toast('Listo. Mira cómo queda en la bienvenida.')}catch(_){}};
+A.bgDel=async()=>{const c=clone(S.cfg);const old=c.fondo;delete c.fondo;try{await setDoc('config/app',c);dropFile(old);toast('Foto quitada')}catch(_){}};
+A.lockNow=()=>lockNow();
+/* --- respaldo --- */
+function askPw(title,msg,btn){return new Promise(res=>{
+  const sh=sheet(`<h2>${esc(title)}</h2><p class="muted">${msg}</p><form class="stack" id="apF"><input class="in" type="password" id="apP" autocomplete="current-password" placeholder="Contraseña"><button class="btn primary">${esc(btn)}</button><button type="button" class="btn ghost" id="apC">Cancelar</button></form>`);
+  let done=false;const fin=v=>{if(done)return;done=true;res(v)};
+  $('#apF',sh).addEventListener('submit',e=>{e.preventDefault();const v=$('#apP',sh).value;if(v)fin(v)});$('#apC',sh).onclick=()=>{closeSheet();fin(null)};
+  sh.parentNode.querySelector('.sheet-bg').addEventListener('click',()=>fin(null));setTimeout(()=>{const i=$('#apP',sh);i&&i.focus()},250);
+})}
+function progress(title,msg){sheet(`<h2>${esc(title)}</h2><p class="muted" id="pgMsg">${esc(msg)}</p><div class="pbar"><div id="pgBar"></div></div>`).parentNode.querySelector('.sheet-bg').removeAttribute('data-act')}
+const setProg=(a,b,msg)=>{const bar=$('#pgBar');if(bar)bar.style.width=(b?Math.round(a/b*100):100)+'%';if(msg&&$('#pgMsg'))$('#pgMsg').textContent=msg};
+A.bkMake=async t=>{
+  const mode=t.dataset.m;
+  const pw=await askPw('Crear respaldo','Escribe tu contraseña de la app. El respaldo queda cifrado con ella: la necesitarás para restaurarlo.','Crear respaldo');if(!pw)return;
+  if(!await Vault.verify(pw)){closeSheet();toast('Contraseña incorrecta');return}
+  progress('Creando respaldo…','Preparando archivos');
+  try{
+    const blob=await Vault.exportBackup(snapshot(),pw,(a,b)=>setProg(a,b,`Archivo ${a} de ${b}`));
+    const c=clone(S.cfg)||{};c.ultimoRespaldo=new Date().toISOString();await setDoc('config/app',c);
+    const name=`respaldo-consultorio-${today()}.txt`;
+    sheet(`<h2>Respaldo listo</h2><p class="muted">${fmtSize(blob.size)} · cifrado con tu contraseña.</p>
+      <div class="stack">${mode==='share'?`<div class="alert info small">En la siguiente pantalla elige <b>Proton Drive</b> (o “Subir a Drive” de Proton) y guárdalo en una carpeta, por ejemplo “Respaldos consultorio”.</div><button class="btn primary" id="bkGo">Enviar a Proton Drive</button>`:''}
+      <button class="btn ${mode==='share'?'ghost':'primary'}" id="bkDl">Guardar en Descargas</button><button class="btn ghost" data-act="closeSheet">Listo</button></div>`);
+    const go=$('#bkGo');if(go)go.onclick=()=>saveFile(blob,name,{share:true});
+    $('#bkDl').onclick=()=>saveFile(blob,name);
+  }catch(e){closeSheet();toast(e&&e.name==='QuotaExceededError'?'No hay espacio en el teléfono para crear el respaldo.':'No se pudo crear el respaldo.')}
+};
+async function restoreFrom(file,{setup}={}){
+  const pw=await askPw('Restaurar respaldo','Escribe la contraseña con la que se hizo ese respaldo.','Abrir respaldo');if(!pw)return false;
+  progress('Abriendo respaldo…','Descifrando');
+  let bk;try{bk=await Vault.readBackup(file,pw)}catch(e){closeSheet();toast(e.message==='badpw'?'Contraseña incorrecta para ese respaldo.':e.message==='notbackup'?'Ese archivo no es un respaldo de esta app.':'No se pudo leer el respaldo.');return false}
+  closeSheet();
+  if(!setup){const ok=await ask('Reemplazar todo',`Se reemplazará todo lo que hay ahora en la app por el respaldo del <b>${esc(new Date(bk.fecha).toLocaleString('es-PE',{dateStyle:'long',timeStyle:'short'}))}</b>.`,[{t:'Restaurar',v:true,cls:'danger'},{t:'Cancelar',v:false}]);if(!ok)return false}
+  else await Vault.create(pw);
+  progress('Restaurando…','Guardando archivos cifrados');
+  try{await Vault.wipeAll();for(const[i,f]of bk.files.entries()){await Vault.putFileAs(f.id,f.blob,{type:f.type});setProg(i+1,bk.files.length)}
+    for(const u of blobURLs.values())URL.revokeObjectURL(u);blobURLs.clear();
+    loadInto(bk.state);await persistNow();closeSheet();toast('Respaldo restaurado');return true}
+  catch(e){closeSheet();toast('No se pudo terminar de restaurar. Inténtalo otra vez.');return false}
+}
+async function importOld(file){
+  let j;try{j=JSON.parse(await file.text())}catch(_){toast('Ese archivo no se pudo leer.');return}
+  if(!j||!j.pacientes){toast('Ese archivo no parece una copia de la app anterior.');return}
+  const hay=Object.keys(S.pac).length;
+  const ok=await ask('Traer datos',`Se cargarán ${Object.keys(j.pacientes).length} pacientes, sus sesiones, pagos y recibos.${hay?' <b>Esto reemplaza los pacientes y cuentas que hay ahora</b> (el material de sesiones se conserva).':''}`,[{t:'Traer datos',v:true,cls:'primary'},{t:'Cancelar',v:false}]);if(!ok)return;
+  const pag=clone(j.pagos||{});for(const x of Object.values(pag))delete x.comprobante;
+  const rec=clone(j.recibos||{});for(const x of Object.values(rec)){delete x.asset;delete x.archivo}
+  const c=clone(j.config||{});delete c.fondo;delete c.driveFolder;
+  c.nombre=S.cfg.nombre||c.nombre||'';c.bloqueo=S.cfg.bloqueo||c.bloqueo;
+  loadInto({pac:j.pacientes,ses:j.sesiones||{},pag,rec,cfg:c,mat:S.mat});
+  try{await persistNow();toast('Datos traídos de la versión anterior');location.hash='menu';render()}catch(_){}
+}
+A.pwChange=()=>{
+  const sh=sheet(`<h2>Cambiar contraseña</h2><form class="stack" id="pwF" style="margin-top:14px"><div><label class="f">Contraseña actual</label><input class="in" type="password" id="pw0" autocomplete="current-password"></div><div><label class="f">Nueva contraseña</label><input class="in" type="password" id="pw1" autocomplete="new-password"></div><div><label class="f">Repite la nueva</label><input class="in" type="password" id="pw2" autocomplete="new-password"></div><div class="muted small">Mínimo 8 caracteres. Los respaldos anteriores siguen abriéndose con la contraseña que tenían.</div><button class="btn primary">Cambiar</button><button type="button" class="btn ghost" data-act="closeSheet">Cancelar</button></form>`);
+  $('#pwF',sh).addEventListener('submit',async e=>{e.preventDefault();const a=$('#pw0').value,b=$('#pw1').value,c=$('#pw2').value;
+    if(b.length<8){toast('La nueva contraseña debe tener al menos 8 caracteres');return}if(b!==c){toast('Las contraseñas nuevas no coinciden');return}
+    try{await Vault.changePw(a,b);closeSheet();toast('Contraseña cambiada')}catch(err){toast(err.message==='badpw'?'La contraseña actual no es correcta':'No se pudo cambiar')}});
+};
+
+/* ============ Bloqueo ============ */
+let lockMode='unlock',hiddenAt=0,idleT=null;
+function bump(){clearTimeout(idleT);if(Vault.unlocked())idleT=setTimeout(()=>{if(!ui.recording)lockNow()},(+cfg('bloqueo')||5)*60000)}
+['click','keydown','touchstart','input','scroll'].forEach(ev=>document.addEventListener(ev,bump,{passive:true}));
+document.addEventListener('visibilitychange',()=>{if(document.hidden){hiddenAt=Date.now()}else{if(Vault.unlocked()&&hiddenAt&&!ui.recording&&Date.now()-hiddenAt>(+cfg('bloqueo')||5)*60000)lockNow();else if(Vault.unlocked())checkInbox()}});
+function lockNow(){
+  Vault.lock();for(const u of blobURLs.values())URL.revokeObjectURL(u);blobURLs.clear();
+  for(const k of['pac','ses','pag','rec','mat'])S[k]={};S.cfg={};S.ready=false;memo.clear();firstMemo.clear();
+  closeSheet();document.querySelectorAll('.dlg-wrap').forEach(x=>x.remove());lockMode='unlock';render();
+}
+function vLock(){
+  const setup=lockMode==='setup';
+  return `<div class="lock"><div class="w-top" style="margin-top:max(7vh,28px)"><div class="mark grad">${ICON.mCal}</div><h1>${setup?'Bienvenido a tu administrador psicoanalítico':'Administrador psicoanalítico'}</h1></div>
+  <form class="lock-card stack" id="lkF" autocomplete="off">
+  ${setup?`<div class="small" style="color:var(--ink2)">Crea una contraseña para proteger la app. Todo lo que guardes quedará cifrado en este teléfono.</div>
+    <div><label class="f">¿Cómo te llamas? (para el saludo)</label><input class="in" id="lkN" autocomplete="given-name"></div>
+    <div><label class="f">Contraseña (mínimo 8 caracteres)</label><input class="in" type="password" id="lkP" autocomplete="new-password"></div>
+    <div><label class="f">Repítela</label><input class="in" type="password" id="lkP2" autocomplete="new-password"></div>
+    <div class="alert warn small"><b>Anótala en un lugar seguro.</b> Si la olvidas no hay forma de recuperar los datos: ni yo ni nadie puede abrirlos.</div>
+    <button class="btn primary" id="lkGo">Crear y entrar</button>
+    <div class="link small filebtn" style="text-align:center;padding:6px 0"><span>¿Ya tienes un respaldo? Restaurarlo</span><input type="file" data-restore="setup"></div>`
+  :`<div><label class="f">Contraseña</label><input class="in" type="password" id="lkP" autocomplete="current-password" autofocus></div>
+    <button class="btn primary" id="lkGo">Entrar</button><div class="small" id="lkE" style="color:var(--bad);text-align:center;min-height:18px"></div>`}
+  </form></div>`;
+}
+function bindLock(){
+  const f=$('#lkF');if(!f)return;bindFiles(f);
+  f.addEventListener('submit',async e=>{e.preventDefault();const b=$('#lkGo');const pw=$('#lkP').value;
+    if(lockMode==='setup'){
+      if(pw.length<8){toast('La contraseña debe tener al menos 8 caracteres');return}if(pw!==$('#lkP2').value){toast('Las contraseñas no coinciden');return}
+      b.disabled=true;b.textContent='Creando…';
+      try{await Vault.create(pw);loadInto({cfg:{nombre:$('#lkN').value.trim()}});await persistNow();await afterUnlock();toast('Listo. Tu app está protegida.')}catch(err){b.disabled=false;b.textContent='Crear y entrar';toast('No se pudo crear. Inténtalo otra vez.')}
+      return;
+    }
+    if(!pw)return;b.disabled=true;b.textContent='Abriendo…';
+    try{await Vault.unlock(pw);loadInto(await Vault.loadState());await afterUnlock()}
+    catch(err){b.disabled=false;b.textContent='Entrar';const el=$('#lkE');if(el)el.textContent=err.message==='badpw'?'Contraseña incorrecta':'No se pudo abrir. Inténtalo otra vez.';$('#lkP').value='';$('#lkP').focus()}
+  });
+  if(lockMode==='unlock')setTimeout(()=>{const i=$('#lkP');i&&i.focus()},200);
+}
+async function afterUnlock(){
+  Vault.persist();bump();
+  if(location.hash!=='#inicio'&&location.hash!=='#menu')location.hash='inicio';
+  render();setTimeout(checkInbox,400);
+}
+
+/* ============ Arranque ============ */
+async function boot(){
+  if(location.search){history.replaceState(null,'',location.pathname+'#inicio')}
+  if(!window.crypto||!crypto.subtle||!window.indexedDB){$('#app').innerHTML='<div class="wrap" style="padding-top:40px"><div class="alert bad">Este navegador no permite guardar datos cifrados. Abre la app en Chrome.</div></div>';return}
+  try{lockMode=await Vault.isSetUp()?'unlock':'setup'}catch(_){lockMode='setup'}
+  render();
+  if('serviceWorker'in navigator&&location.protocol==='https:')navigator.serviceWorker.register('./sw.js').catch(()=>{});
+}
+if(location.hash&&location.hash!=='#inicio')location.hash='inicio';
+setInterval(()=>{if(!Vault.unlocked())return;memo.clear();if(route()==='calendario'||route()==='menu')render()},5*60*1000);
+boot();
+</script>
+</body>
+</html>
