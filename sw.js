@@ -1,5 +1,5 @@
 /* Service worker: guarda la app para que funcione sin internet y recibe archivos compartidos. */
-const CACHE='froid-v2';
+const CACHE='froid-v3';
 const FILES=['./','./index.html','./vault.js','./manifest.webmanifest','./dmsans.woff2','./icon-192.png','./icon-512.png','./icon-maskable.png','./fraunces.woff2','./img/logo-vertical.svg','./img/logo-horizontal.svg','./img/froid-atento.svg','./img/froid-tranquilo.svg','./img/froid-feliz.svg','./img/froid-complice.svg','./img/froid-pensativo.svg','./img/froid-sorprendido.svg'];
 self.addEventListener('install',e=>{e.waitUntil(caches.open(CACHE).then(c=>c.addAll(FILES)).then(()=>self.skipWaiting()))});
 self.addEventListener('activate',e=>{e.waitUntil(caches.keys().then(ks=>Promise.all(ks.filter(k=>k!==CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim()))});
