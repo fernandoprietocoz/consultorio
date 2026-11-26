@@ -3,21 +3,26 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Administrador psicoanalítico</title>
+<title>Froid</title>
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' blob: data:; media-src 'self' blob:; font-src 'self'; connect-src 'self'; frame-src 'none'; object-src 'none'; base-uri 'self'; form-action 'self'">
 <meta name="referrer" content="no-referrer">
-<meta name="theme-color" content="#FF7A3D">
+<meta name="theme-color" content="#F7EFE6">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon-192.png">
 <link rel="apple-touch-icon" href="icon-192.png">
+<link rel="preload" href="img/froid-atento.svg" as="image">
 <style>
+@font-face{font-family:"Fraunces";font-style:normal;font-weight:600 700;font-display:swap;src:url(fraunces.woff2) format("woff2")}
 @font-face{font-family:"DM Sans";font-style:normal;font-weight:300 700;font-display:swap;src:url(dmsans.woff2) format("woff2")}
 :root{
-  --g1:#FF7A3D;--g2:#FF6FB5;--grad:linear-gradient(90deg,#FF7A3D 0%,#FF6FB5 100%);
-  --bg:#F7F6F9;--card:#fff;--ink:#1F1D2B;--ink2:#4B4859;--mut:#8C8999;--line:#ECEAF1;
-  --pres:#FF7A3D;--presSoft:#FFF1E9;--vir:#E2559F;--virSoft:#FFEAF4;
-  --ok:#1F9D6B;--okSoft:#E6F6EF;--bad:#E5484D;--badSoft:#FDECEC;--warnSoft:#FFF4E5;
-  --r:18px;--sh:0 1px 2px rgba(31,29,43,.04),0 6px 20px rgba(31,29,43,.05);
+  /* Identidad Froid */
+  --ind:#2B2F8C;--blue:#1F63E0;--grn:#138A6B;--grn2:#0D7461;--pink:#F3C9C1;--cream:#F7EFE6;--paper:#FBF7F2;
+  --g1:#1F63E0;--g2:#2B2F8C;--grad:#2B2F8C;
+  --bg:#F7EFE6;--card:#FFFCF8;--ink:#2B2F8C;--ink2:#45486E;--mut:#6B6E8F;--line:#E9DED3;
+  --pres:#1F63E0;--presSoft:#E4ECFB;--vir:#138A6B;--virSoft:#DDF1EA;
+  --ok:#0D7461;--okSoft:#DDF1EA;--bad:#B4232C;--badSoft:#FBE3E1;--warnSoft:#FBE8E2;
+  --fr:'Fraunces',Georgia,serif;
+  --r:20px;--sh:0 1px 2px rgba(43,47,140,.04),0 6px 20px rgba(43,47,140,.06);
 }
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{margin:0;background:var(--bg);color:var(--ink);font-family:'DM Sans',system-ui,-apple-system,sans-serif;font-size:15px;line-height:1.4}
@@ -34,30 +39,30 @@ h1,h2,h3{margin:0;letter-spacing:-.01em}
 .stack>*+*{margin-top:12px}
 
 /* Top bar */
-.top{position:sticky;top:0;z-index:20;background:rgba(247,246,249,.92);backdrop-filter:blur(10px);padding:14px 18px 10px;display:flex;align-items:center;gap:12px}
+.top{position:sticky;top:0;z-index:20;background:rgba(247,239,230,.94);backdrop-filter:blur(10px);padding:14px 18px 10px;display:flex;align-items:center;gap:12px}
 .top h1{font-size:21px;font-weight:700;flex:1}
 .icon-btn{width:40px;height:40px;border-radius:50%;border:1px solid var(--line);background:#fff;display:grid;place-items:center;cursor:pointer;flex:none}
 .icon-btn svg{width:20px;height:20px}
 
 /* Buttons */
 .btn{border:0;border-radius:14px;height:50px;padding:0 18px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:8px;text-decoration:none;width:100%;font-size:15px}
-.btn.primary{background:var(--grad);color:#fff;box-shadow:0 6px 16px rgba(255,111,130,.28)}
+.btn.primary{background:var(--ind);color:#fff;box-shadow:0 6px 16px rgba(43,47,140,.22)}
 .btn.ghost{background:#fff;border:1px solid var(--line);color:var(--ink)}
-.btn.soft{background:var(--presSoft);color:#C4561F}
+.btn.soft{background:var(--presSoft);color:#1747A6}
 .btn.danger{background:var(--badSoft);color:var(--bad)}
 .btn.sm{height:38px;border-radius:11px;font-size:14px;padding:0 12px;width:auto}
 .btn:disabled{opacity:.45;cursor:default}
-.link{background:none;border:0;color:#E0598A;font-weight:600;cursor:pointer;padding:0}
+.link{background:none;border:0;color:var(--blue);font-weight:600;cursor:pointer;padding:0}
 
 /* Cards */
 .card{background:var(--card);border-radius:var(--r);padding:16px;box-shadow:var(--sh)}
 .card.tap{cursor:pointer}
 .chip{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:600;padding:3px 9px;border-radius:999px;white-space:nowrap}
-.chip.pres{background:var(--presSoft);color:#C4561F}
-.chip.vir{background:var(--virSoft);color:#B8377A}
+.chip.pres{background:var(--presSoft);color:#1747A6}
+.chip.vir{background:var(--virSoft);color:#0B5E4E}
 .chip.ok{background:var(--okSoft);color:var(--ok)}
 .chip.bad{background:var(--badSoft);color:var(--bad)}
-.chip.gray{background:#F0EFF4;color:var(--ink2)}
+.chip.gray{background:#EFE6DC;color:var(--ink2)}
 .chip.warn{background:var(--warnSoft);color:#B86A00}
 .dot{width:8px;height:8px;border-radius:50%;display:inline-block;flex:none}
 .dot.pres{background:var(--pres)}.dot.vir{background:var(--vir)}
@@ -67,10 +72,10 @@ h1,h2,h3{margin:0;letter-spacing:-.01em}
 .illo b{font-size:10.5px;letter-spacing:.12em;color:#E0598A}
 
 /* Welcome */
-.welcome{position:fixed;inset:0;z-index:50;display:flex;flex-direction:column;align-items:center;text-align:center;cursor:pointer;background:#2A2433 center/cover no-repeat;color:#fff;padding:env(safe-area-inset-top) 28px env(safe-area-inset-bottom)}
-.welcome.nophoto{background:linear-gradient(160deg,#FF8A50 0%,#FF6FB5 100%)}
-.welcome::before{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(20,15,30,.45) 0%,rgba(20,15,30,0) 38%,rgba(20,15,30,0) 62%,rgba(20,15,30,.45) 100%)}
-.welcome.nophoto::before{background:none}
+.welcome{position:fixed;inset:0;z-index:50;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;cursor:pointer;background:var(--pink);color:var(--ind);padding:env(safe-area-inset-top) 28px env(safe-area-inset-bottom)}
+.welcome .logo{width:min(62vw,250px);height:auto;margin-top:6px}
+.welcome .bubble{flex:none;max-width:290px;margin:0 auto 22px;font-size:16px;padding:12px 18px}
+.welcome .bubble::before{left:50%;top:auto;bottom:-8px;transform:translateX(-50%) rotate(-45deg)}
 .welcome>*{position:relative}
 .w-top{display:flex;flex-direction:column;align-items:center;margin-top:max(10vh,40px)}
 .w-top .mark{width:92px;height:92px;border-radius:50%;display:grid;place-items:center;margin-bottom:22px}
@@ -78,7 +83,7 @@ h1,h2,h3{margin:0;letter-spacing:-.01em}
 .w-top .mark.grad{background:var(--grad);color:#fff;border:2px solid rgba(255,255,255,.75);box-shadow:0 10px 26px rgba(20,15,30,.22)}
 .w-top .mark.white{background:#fff;color:#E2559F;box-shadow:0 10px 26px rgba(20,15,30,.15)}
 .w-top h1{font-size:28px;line-height:1.2;font-weight:700;letter-spacing:.035em;max-width:310px;text-shadow:0 1px 12px rgba(20,15,30,.18)}
-.w-bot{position:absolute;left:0;right:0;bottom:calc(36px + env(safe-area-inset-bottom));font-size:13px;opacity:.85;animation:pl 1.8s infinite;letter-spacing:.04em}
+.w-bot{position:absolute;left:0;right:0;bottom:calc(36px + env(safe-area-inset-bottom));font-size:13px;color:var(--ind);font-weight:500;opacity:.85;animation:pl 1.8s infinite;letter-spacing:.04em}
 .w-btn{width:78px;height:78px;border-radius:50%;border:1.5px solid rgba(255,255,255,.85);background:rgba(255,255,255,.14);backdrop-filter:blur(6px);display:grid;place-items:center;animation:pl 2.4s infinite}
 .w-btn svg{width:36px;height:36px}
 .w-bot span{font-size:13px;letter-spacing:.12em;text-transform:uppercase;font-weight:400;opacity:.9}
@@ -92,10 +97,22 @@ h1,h2,h3{margin:0;letter-spacing:-.01em}
 .menu-item h3{font-size:18px}
 .today-list{margin-top:10px}
 .today-list .r{display:flex;align-items:center;gap:10px;padding:7px 0;border-top:1px solid var(--line)}
-.banner{border-radius:16px;padding:12px 14px;background:var(--warnSoft);color:#8A5000;font-size:14px;display:flex;gap:10px;align-items:flex-start}
+.banner{border-radius:18px;padding:10px 14px 10px 8px;background:var(--card);border:2px solid var(--ind);color:var(--ind);font-size:14px;display:flex;gap:8px;align-items:center;font-weight:500}
+.banner img{width:52px;height:50px;flex:none}
+/* Froid */
+.hello h2,.sheet h2,.big,.fr,.froid-empty h3{font-family:var(--fr);letter-spacing:-.005em}
+.hello h2{font-size:30px;color:var(--ind)}
+.say{display:flex;align-items:center;gap:10px}
+.say img{width:84px;height:80px;flex:none}
+.bubble{position:relative;flex:1;background:var(--card);border:2px solid var(--ind);border-radius:18px;padding:10px 14px;color:var(--ind);font-size:14.5px;font-weight:500;line-height:1.35}
+.bubble::before{content:"";position:absolute;left:-8px;top:50%;width:12px;height:12px;background:var(--card);border-left:2px solid var(--ind);border-bottom:2px solid var(--ind);transform:translateY(-50%) rotate(45deg)}
+.froid-empty{display:flex;flex-direction:column;align-items:center;text-align:center;padding:18px 10px 8px;gap:6px}
+.froid-empty img{width:130px;height:125px}
+.froid-empty h3{font-size:24px;color:var(--ind);margin-top:4px}
+.froid-empty p{margin:0;color:var(--ink2);font-size:14.5px;max-width:300px}
 
 /* Segmented */
-.seg{display:flex;background:#EEEDF2;border-radius:12px;padding:3px;gap:3px}
+.seg{display:flex;background:#EBE0D5;border-radius:12px;padding:3px;gap:3px}
 .seg button{flex:1;border:0;background:none;height:36px;border-radius:9px;font-weight:600;font-size:14px;color:var(--ink2);cursor:pointer}
 .seg button.on{background:#fff;color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.08)}
 
@@ -112,9 +129,9 @@ h1,h2,h3{margin:0;letter-spacing:-.01em}
 .dcol{position:relative;border-left:1px solid var(--line);cursor:pointer}
 .blk{position:absolute;left:2px;right:2px;border-radius:7px;padding:2px 4px;font-size:10px;line-height:1.15;overflow:hidden;cursor:pointer;border-left:3px solid}
 .blk b{display:block;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.blk.presencial{background:var(--presSoft);border-color:var(--pres);color:#8A3A12}
-.blk.virtual{background:var(--virSoft);border-color:var(--vir);color:#8C2460}
-.blk.st-cancelo,.blk.st-cancelo_tarde{background:#F3F2F6;border-color:#C9C6D2;color:#8C8999}
+.blk.presencial{background:var(--presSoft);border-color:var(--pres);color:#1747A6}
+.blk.virtual{background:var(--virSoft);border-color:var(--vir);color:#0B5E4E}
+.blk.st-cancelo,.blk.st-cancelo_tarde{background:#EFE6DC;border-color:#CDBFB1;color:#6B6E8F}
 .blk.st-cancelo b,.blk.st-cancelo_tarde b{text-decoration:line-through}
 .blk.st-no_asistio{background:var(--badSoft);border-color:var(--bad);color:#9B2226}
 .day-list .slot{display:flex;gap:12px;align-items:stretch;min-height:50px}
@@ -123,10 +140,10 @@ h1,h2,h3{margin:0;letter-spacing:-.01em}
 .scard{flex:1;margin:4px 0;border-radius:14px;padding:10px 14px;cursor:pointer;border-left:4px solid}
 .scard.presencial{background:var(--presSoft);border-color:var(--pres)}
 .scard.virtual{background:var(--virSoft);border-color:var(--vir)}
-.scard.st-cancelo,.scard.st-cancelo_tarde{background:#F3F2F6;border-color:#C9C6D2}
+.scard.st-cancelo,.scard.st-cancelo_tarde{background:#EFE6DC;border-color:#CDBFB1}
 .scard.st-no_asistio{background:var(--badSoft);border-color:var(--bad)}
 .scard .nm{font-weight:700;font-size:15px}
-.fab{position:fixed;right:max(18px,calc(50% - 222px));bottom:24px;width:58px;height:58px;border-radius:50%;background:var(--grad);color:#fff;border:0;box-shadow:0 8px 22px rgba(255,111,130,.4);display:grid;place-items:center;cursor:pointer;z-index:30}
+.fab{position:fixed;right:max(18px,calc(50% - 222px));bottom:24px;width:58px;height:58px;border-radius:50%;background:var(--grad);color:#fff;border:0;box-shadow:0 8px 22px rgba(43,47,140,.3);display:grid;place-items:center;cursor:pointer;z-index:30}
 .fab svg{width:26px;height:26px}
 
 /* Lists */
@@ -135,14 +152,14 @@ h1,h2,h3{margin:0;letter-spacing:-.01em}
 .search svg{position:absolute;left:13px;top:14px;width:18px;height:18px;color:var(--mut)}
 .pitem{display:flex;align-items:center;gap:12px;cursor:pointer}
 .avatar{width:44px;height:44px;border-radius:14px;background:var(--grad);color:#fff;font-weight:700;display:grid;place-items:center;flex:none;font-size:15px}
-.avatar.v{background:linear-gradient(135deg,#FF8DC4,#E2559F)}
+.avatar{background:var(--blue)}.avatar.v{background:var(--grn2)}
 .pitem .nm{font-weight:700}
 .amount{font-weight:700;font-size:16px;white-space:nowrap}
 .amount.due{color:var(--bad)}
 .big{font-size:30px;font-weight:700;letter-spacing:-.02em}
 .tabs{display:flex;gap:8px;padding:0 18px 12px;overflow-x:auto}
 .tabs button{border:1px solid var(--line);background:#fff;border-radius:999px;height:38px;padding:0 16px;font-weight:600;cursor:pointer;white-space:nowrap;font-size:14px}
-.tabs button.on{background:var(--grad);border-color:transparent;color:#fff}
+.tabs button.on{background:var(--ind);border-color:transparent;color:#fff}
 .sec-title{font-size:13px;font-weight:700;color:var(--mut);text-transform:uppercase;letter-spacing:.06em;margin:20px 0 8px}
 .lrow{display:flex;align-items:center;gap:10px;padding:10px 0;border-top:1px solid var(--line)}
 .lrow:first-child{border-top:0}
@@ -151,11 +168,11 @@ h1,h2,h3{margin:0;letter-spacing:-.01em}
 label.f{display:block;font-size:13px;font-weight:600;color:var(--ink2);margin-bottom:6px}
 .in{width:100%;height:48px;border-radius:12px;border:1px solid var(--line);background:#fff;padding:0 14px;outline:none;font-size:15px}
 textarea.in{height:auto;min-height:96px;padding:12px 14px;resize:vertical}
-.in:focus{border-color:var(--g1);box-shadow:0 0 0 3px rgba(255,122,61,.12)}
+.in:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(31,99,224,.14)}
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .slotrow{display:grid;grid-template-columns:1fr 112px 48px;gap:8px;margin-bottom:8px}
 .tp{display:grid;grid-template-columns:1fr 132px;gap:8px;align-items:center}.tp .seg button{height:40px}
-.ico{width:54px;height:54px;border-radius:50%;background:var(--grad);box-shadow:0 6px 14px rgba(255,111,130,.28);display:grid;place-items:center;flex:none;color:#fff}
+.ico{width:54px;height:54px;border-radius:50%;background:var(--ind);box-shadow:0 6px 14px rgba(43,47,140,.18);display:grid;place-items:center;flex:none;color:#fff}
 .ico svg{width:28px;height:28px}
 .menu-item h3{font-size:19px;font-weight:700}
 .menu-btn{display:flex;align-items:center;gap:14px;cursor:pointer;border-radius:20px;padding:20px 20px;background:var(--grad);color:#fff;box-shadow:0 10px 24px rgba(255,111,130,.30)}
@@ -168,10 +185,10 @@ textarea.in{height:auto;min-height:96px;padding:12px 14px;resize:vertical}
 
 /* Sheet & dialog */
 .sheet-wrap{position:fixed;inset:0;z-index:60}
-.sheet-bg{position:absolute;inset:0;background:rgba(25,20,35,.42);opacity:0;transition:opacity .2s}
+.sheet-bg{position:absolute;inset:0;background:rgba(30,32,90,.38);opacity:0;transition:opacity .2s}
 .sheet{position:absolute;left:0;right:0;bottom:0;max-width:480px;margin:0 auto;background:var(--bg);border-radius:26px 26px 0 0;max-height:92vh;overflow:auto;padding:8px 18px calc(24px + env(safe-area-inset-bottom));transform:translateY(100%);transition:transform .25s ease}
 .sheet-wrap.on .sheet{transform:none}.sheet-wrap.on .sheet-bg{opacity:1}
-.grab{width:42px;height:5px;border-radius:5px;background:#D8D5DF;margin:4px auto 14px}
+.grab{width:42px;height:5px;border-radius:5px;background:#D9CABC;margin:4px auto 14px}
 .sheet h2{font-size:21px;font-weight:700}
 .actgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .actbtn{border:1px solid var(--line);background:#fff;border-radius:16px;height:74px;font-weight:700;font-size:15px;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px}
@@ -181,30 +198,32 @@ textarea.in{height:auto;min-height:96px;padding:12px 14px;resize:vertical}
 .alert.bad{background:var(--badSoft);color:#9B2226}
 .alert.ok{background:var(--okSoft);color:#155C40}
 .alert.warn{background:var(--warnSoft);color:#8A5000}
-.alert.info{background:#F0EFF4;color:var(--ink2)}
-.dlg-wrap{position:fixed;inset:0;z-index:80;background:rgba(25,20,35,.45);display:grid;place-items:center;padding:24px}
+.alert.info{background:#EFE6DC;color:var(--ink2)}
+.dlg-wrap{position:fixed;inset:0;z-index:80;background:rgba(30,32,90,.42);display:grid;place-items:center;padding:24px}
 .dlg{background:#fff;border-radius:22px;padding:22px;max-width:380px;width:100%}
 .dlg h3{font-size:18px;margin-bottom:8px}
 .dlg p{margin:0 0 16px;color:var(--ink2)}
 .dlg-btns{display:flex;flex-direction:column;gap:8px}
-.toast{position:fixed;left:50%;bottom:96px;transform:translateX(-50%);background:#1F1D2B;color:#fff;padding:11px 18px;border-radius:12px;font-size:14px;z-index:90;max-width:90vw;box-shadow:0 8px 20px rgba(0,0,0,.2)}
+.toast{position:fixed;left:50%;bottom:96px;transform:translateX(-50%);background:var(--ind);color:#fff;padding:11px 18px;border-radius:12px;font-size:14px;z-index:90;max-width:90vw;box-shadow:0 8px 20px rgba(0,0,0,.2)}
 .loading{padding:60px 20px;text-align:center;color:var(--mut)}
 .radio{display:flex;gap:10px;align-items:flex-start;padding:12px;border:1px solid var(--line);border-radius:14px;background:#fff;cursor:pointer}
 .radio input{margin-top:3px;accent-color:var(--g1)}
 .filebtn{position:relative;overflow:hidden}
 .filebtn input[type=file]{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;font-size:200px;z-index:2}
 .switch{display:flex;align-items:center;justify-content:space-between;gap:12px}
-.lock{min-height:100vh;display:flex;flex-direction:column;align-items:center;text-align:center;color:#fff;background:linear-gradient(160deg,#FF8A50 0%,#FF6FB5 100%);padding:env(safe-area-inset-top) 20px calc(30px + env(safe-area-inset-bottom))}
-.lock-card{background:#fff;color:var(--ink);border-radius:22px;padding:20px;width:100%;max-width:400px;text-align:left;margin-top:26px;box-shadow:0 12px 30px rgba(20,15,30,.18)}
+.lock .logo{width:150px;height:auto;margin-top:max(5vh,22px)}
+.lock h1{font-family:var(--fr);font-size:26px;line-height:1.2;color:var(--ind);margin-top:14px;max-width:320px}
+.lock{min-height:100vh;display:flex;flex-direction:column;align-items:center;text-align:center;color:var(--ind);background:var(--pink);padding:env(safe-area-inset-top) 20px calc(30px + env(safe-area-inset-bottom))}
+.lock-card{background:var(--card);color:var(--ink);border-radius:22px;padding:20px;width:100%;max-width:400px;text-align:left;margin-top:20px;box-shadow:0 12px 30px rgba(43,47,140,.14)}
 .pitem{flex-wrap:wrap}.pchips{display:flex;gap:8px;flex-basis:100%;padding-left:56px;margin-top:-2px}
 .pchips button{white-space:nowrap;border:1px solid var(--line);background:#fff;border-radius:999px;height:32px;padding:0 12px;font-size:12.5px;font-weight:600;cursor:pointer;color:var(--ink2)}
-.pchips button.cl{background:var(--virSoft);border-color:transparent;color:#B8377A}
-.mico{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;flex:none;background:var(--presSoft);color:#C4561F}
-.mico.audio{background:var(--virSoft);color:#B8377A}.mico.nota{background:#F0EFF4;color:var(--ink2)}
+.pchips button.cl{background:var(--pink);border-color:transparent;color:var(--ind)}
+.mico{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;flex:none;background:var(--presSoft);color:#1747A6}
+.mico.audio{background:var(--pink);color:var(--ind)}.mico.nota{background:var(--virSoft);color:#0B5E4E}
 .actbtn svg{margin-bottom:2px}
 .doctext{white-space:pre-wrap;word-break:break-word;font-size:15px;line-height:1.55;max-height:55vh;overflow:auto}
 .recdot{width:16px;height:16px;border-radius:50%;background:var(--bad);animation:pl 1.2s infinite}
-.pbar{height:8px;border-radius:8px;background:#EEEDF2;overflow:hidden;margin:10px 0 6px}.pbar div{height:100%;width:0;background:var(--grad);transition:width .2s}
+.pbar{height:8px;border-radius:8px;background:#EBE0D5;overflow:hidden;margin:10px 0 6px}.pbar div{height:100%;width:0;background:var(--grad);transition:width .2s}
 </style>
 </head>
 <body>
@@ -261,6 +280,11 @@ const ICON={
  cal:'<svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>',
 };
 const illo=(desc,h=110,extra='')=>`<div class="illo" style="height:${h}px;${extra}"><b>ILUSTRACIÓN</b>${esc(desc)}</div>`;
+/* Froid: el practicante. Expresiones: atento, tranquilo, feliz, complice, pensativo, sorprendido */
+const froidImg=(e='atento',cls='')=>`<img src="img/froid-${e}.svg" alt="" aria-hidden="true" class="${cls}">`;
+const say=(e,html)=>`<div class="say">${froidImg(e)}<div class="bubble">${html}</div></div>`;
+const froidEmpty=(e,title,text,extra='')=>`<div class="froid-empty">${froidImg(e)}<h3>${esc(title)}</h3>${text?`<p>${text}</p>`:''}${extra}</div>`;
+const banner=(e,html)=>`<div class="banner">${froidImg(e)}<span>${html}</span></div>`;
 
 /* ============ Estado ============ */
 const DEF={tarifa:160,consultorio:20,hIni:8,hFin:21,nombre:'',bloqueo:5};
@@ -421,9 +445,11 @@ function render(){
 
 /* ============ Bienvenida ============ */
 function vWelcome(){
-  const f=S.cfg.fondo;
-  return `<div class="welcome ${f?'':'nophoto'}" data-act="enter" ${f?`data-bgblob="${esc(f)}"`:''}>
-    <div class="w-top"><div class="mark ${(S.cfg.iconoEstilo||(f?'degradado':'blanco'))==='degradado'?'grad':'white'}">${ICON.mCal}</div><h1>Bienvenido a tu administrador psicoanalítico</h1></div>
+  const n=cfg('nombre');const hr=new Date().getHours();
+  const sal=hr<12?'¡Buenos días':hr<19?'¡Buenas tardes':'¡Buenas noches';
+  return `<div class="welcome" data-act="enter">
+    <div class="bubble">${sal}${n?', '+esc(n):''}! Pasa, te estaba esperando.</div>
+    <img class="logo" src="img/logo-vertical.svg" alt="Froid, tu administrador psicoterapéutico">
     <div class="w-bot">Toca la pantalla para entrar</div>
   </div>`;
 }
@@ -436,10 +462,11 @@ function vMenu(){
   const d=new Date();
   return `<div class="top" style="padding-bottom:0"><div class="grow"></div><button class="icon-btn" data-act="go" data-to="config" aria-label="Configuración">${ICON.gear}</button></div>
   <div class="hello"><div class="muted">${esc(fmtLong(t))}</div><h2>Hola${cfg('nombre')?', '+esc(cfg('nombre')):''}</h2></div>
-  <div class="wrap stack" style="margin-top:12px">
-    ${!S.cfg.ultimoRespaldo||(Date.now()-new Date(S.cfg.ultimoRespaldo))>7*864e5?`<div class="banner"><span>${S.cfg.ultimoRespaldo?'Hace más de una semana que no respaldas.':'Aún no tienes un respaldo.'} <button class="link" data-act="go" data-to="config">Respaldar en Proton Drive</button></span></div>`:''}
-    ${parseD(t).getDate()===15&&Object.values(S.pac).some(p=>p.pago==='quincenal'&&(!p.fin||p.fin>=t))?`<div class="banner"><b>Hoy es 15:</b> toca cobrar la primera quincena a ${esc(Object.values(S.pac).filter(p=>p.pago==='quincenal'&&(!p.fin||p.fin>=t)).map(p=>first(p.nombre)).join(', '))}. <button class="link" data-act="go" data-to="cuentas">Ver cuentas</button></div>`:''}
-    ${fin?`<div class="banner"><b>Hoy es fin de mes.</b> Toca emitir los recibos en SUNAT. <button class="link" data-act="goRecibos">Ver recibos</button></div>`:''}
+  <div class="wrap stack" style="margin-top:8px">
+    ${say(hoy.length?'atento':'tranquilo',hoy.length?`${new Date().getHours()<12?'¡Buen día!':'¡Hola!'} Hoy tienes ${hoy.length} ${hoy.length===1?'sesión':'sesiones'}. Yo llevo las cuentas.`:'Día libre. Yo cuido la agenda.')}
+    ${!S.cfg.ultimoRespaldo||(Date.now()-new Date(S.cfg.ultimoRespaldo))>7*864e5?banner('sorprendido',`${S.cfg.ultimoRespaldo?'Hace más de una semana que no respaldas.':'Aún no tienes un respaldo.'} <button class="link" data-act="go" data-to="config">Respaldar en Proton Drive</button>`):''}
+    ${parseD(t).getDate()===15&&Object.values(S.pac).some(p=>p.pago==='quincenal'&&(!p.fin||p.fin>=t))?banner('complice',`Hoy es 15: toca cobrar la quincena a ${esc(Object.values(S.pac).filter(p=>p.pago==='quincenal'&&(!p.fin||p.fin>=t)).map(p=>first(p.nombre)).join(', '))}. <button class="link" data-act="go" data-to="cuentas">Ver cuentas</button>`):''}
+    ${fin?banner('complice',`Fin de mes: ¿emitimos los recibos en SUNAT? <button class="link" data-act="goRecibos">Ver recibos</button>`):''}
     <div class="card">
       <div class="row between"><b>Hoy</b><span class="muted small">${hoy.length} ${hoy.length===1?'sesión':'sesiones'}</span></div>
       ${hoy.length?`<div class="today-list">${hoy.map(o=>`<div class="r" data-act="openSes" data-k="${esc(o.key)}" style="cursor:pointer"><b style="width:78px;white-space:nowrap">${fmtH(o.hora)}</b><span class="dot ${o.modalidad==='virtual'?'vir':'pres'}"></span><span class="grow">${esc(o.p.nombre)}</span></div>`).join('')}</div>`:`<div class="muted small" style="margin-top:6px">No tienes sesiones hoy.</div>`}
@@ -447,7 +474,6 @@ function vMenu(){
     <div class="card menu-item" data-act="go" data-to="calendario"><div class="ico">${ICON.mCal}</div><div class="grow"><h3>Calendario</h3><div class="muted small">Semana y día con tus pacientes</div></div>${ICON.next.replace('<svg','<svg width="20"')}</div>
     <div class="card menu-item" data-act="go" data-to="pacientes"><div class="ico">${ICON.mPac}</div><div class="grow"><h3>Pacientes</h3><div class="muted small">${Object.values(S.pac).filter(p=>estadoPac(p,t)==='activo').length} activos${Object.values(S.pac).some(p=>estadoPac(p,t)==='pausa')?` · ${Object.values(S.pac).filter(p=>estadoPac(p,t)==='pausa').length} en pausa`:''}</div></div>${ICON.next.replace('<svg','<svg width="20"')}</div>
     <div class="card menu-item" data-act="go" data-to="cuentas"><div class="ico">${ICON.mCta}</div><div class="grow"><h3>Cuentas</h3><div class="muted small">Por cobrar · Por pagar · Recibos</div></div>${ICON.next.replace('<svg','<svg width="20"')}</div>
-    ${illo('Escena tranquila de consultorio: diván, planta y una lámpara cálida',120)}
   </div>`;
 }
 A.goRecibos=()=>{ui.cuentasTab='recibos';ui.recMes=mesKey(today());location.hash='cuentas'};
@@ -488,7 +514,7 @@ function vDay(){
     here.forEach(o=>used.add(o.key));
     rows.push(`<div class="slot"><div class="h">${fmtHh(h)}</div><div class="grow">${here.length?here.map(o=>`<div class="scard ${o.modalidad} st-${o.estado}" data-act="openSes" data-k="${esc(o.key)}"><div class="row between"><span class="nm">${esc(o.p.nombre)}</span><b class="small">${fmtH(o.hora)}</b></div><div class="row" style="gap:6px;margin-top:6px;flex-wrap:wrap">${modChip(o.modalidad)}${o.implicit&&o.estado==='programada'?'':estChip(o)}${o.movida?'<span class="chip gray">Reprogramada</span>':''}${o.extra?'<span class="chip gray">Extra</span>':''}${esPrimeraGratis(o)?'<span class="chip ok">1.ª sesión · sin costo</span>':''}</div></div>`).join(''):`<div class="free" data-act="addAt" data-d="${d}" data-h="${pad(h)}:00">Libre · toca para agendar</div>`}</div></div>`);
   }
-  return `<div class="wrap day-list">${occ.length?'':`<div style="margin-bottom:10px">${illo('Calendario abierto con un reloj suave: día libre',90)}</div>`}${rows.join('')}</div>`;
+  return `<div class="wrap day-list">${occ.length?'':froidEmpty('tranquilo','Día libre','No tienes sesiones este día. Aprovecha para descansar: yo cuido la agenda.')}${rows.join('')}</div>`;
 }
 A.addAt=t=>openAdd(t.dataset.d,t.dataset.h);
 A.addSes=()=>openAdd(ui.cal.mode==='dia'?ui.cal.date:today(),'');
@@ -542,7 +568,7 @@ A.sesSet=async t=>{const o=findOcc(t.dataset.k);const e=t.dataset.e;try{await sa
 A.sesMod=async t=>{const o=findOcc(t.dataset.k);const nv=o.modalidad==='virtual'?'presencial':'virtual';try{await saveOv(o,{modalidad:nv===(o.p.modalidad||'presencial')?null:nv});closeSheet();toast('Esta sesión ahora es '+nv)}catch(_){}};
 A.sesReset=async t=>{try{await delDoc('sesiones/'+t.dataset.k);closeSheet();toast('Sesión restablecida')}catch(_){}};
 A.sesDelExtra=async t=>{const ok=await ask('Eliminar sesión','¿Eliminar esta sesión extra?',[{t:'Eliminar',v:true,cls:'danger'},{t:'Volver',v:false}]);if(!ok)return;try{await delDoc('sesiones/'+t.dataset.k);closeSheet();toast('Sesión eliminada')}catch(_){}};
-A.sesPay=async t=>{const o=findOcc(t.dataset.k);const id=newId('pagos');try{await setDoc('pagos/'+id,{pid:o.pid,monto:costo(o),fecha:today(),sesKey:o.key,nota:'Sesión del '+fmtShort(o.fecha)});closeSheet();toast('Pago registrado')}catch(_){}};
+A.sesPay=async t=>{const o=findOcc(t.dataset.k);const id=newId('pagos');try{await setDoc('pagos/'+id,{pid:o.pid,monto:costo(o),fecha:today(),sesKey:o.key,nota:'Sesión del '+fmtShort(o.fecha)});closeSheet();toast('¡Listo! Pago registrado.')}catch(_){}};
 A.sesMove=async t=>{
   const o=findOcc(t.dataset.k);const f=$('#mvF').value,h=tpVal($('#mvH'));
   if(!f||!h){toast('Elige fecha y hora');return}
@@ -595,7 +621,7 @@ A.addSave=async()=>{
   }else{
     if(!await checkSlot(f,h,null))return;
     const id='x'+newId('sesiones');
-    try{await setDoc('sesiones/'+id,{extra:true,pid,fecha:f,hora:h,fechaOrig:f,horaOrig:h});closeSheet();toast('Sesión agregada')}catch(_){}
+    try{await setDoc('sesiones/'+id,{extra:true,pid,fecha:f,hora:h,fechaOrig:f,horaOrig:h});closeSheet();toast('¡Listo! Agendé la sesión.')}catch(_){}
   }
 };
 
@@ -608,7 +634,7 @@ function vPacientes(){
   return topbar('Pacientes')+`<div class="wrap stack">
     <div class="search">${ICON.search}<input class="in" id="q" placeholder="Buscar paciente" value="${esc(ui.q)}"></div>
     <button class="btn primary" data-act="newPac">${ICON.plus.replace('<svg','<svg width="18"')} Nuevo paciente</button>
-    ${act.length?act.map(item).join(''):illo('Persona con libreta, sentada: aún no hay pacientes',140)}
+    ${act.length?act.map(item).join(''):froidEmpty('atento','Aún no hay pacientes','Agrega el primero con el botón de arriba y yo me encargo de su agenda.')}
     ${pausa.length?`<div class="sec-title">En pausa</div>${pausa.map(item).join('')}`:''}
     ${alta.length?`<div class="sec-title">De alta</div>${alta.map(item).join('')}`:''}
   </div>`;
@@ -677,7 +703,7 @@ function openPatient(id){
     if(isNew)np.tarifas=[{desde:'2000-01-01',monto:tar}];
     else if(tar!==+F.tar){const td=fd.tarDesde||t;np.tarifas=(np.tarifas||[]).filter(x=>x.desde<td);np.tarifas.push({desde:td,monto:tar})}
     const pid=isNew?newId('pacientes'):id;np.id=pid;
-    try{await setDoc('pacientes/'+pid,np);closeSheet();toast(isNew?'Paciente guardado':'Cambios guardados')}catch(_){}
+    try{await setDoc('pacientes/'+pid,np);closeSheet();toast(isNew?'¡Listo! Paciente guardado.':'¡Listo! Cambios guardados.')}catch(_){}
   });
 }
 A.pausaIni=t=>{const id=t.dataset.id;const p=S.pac[id];
@@ -724,7 +750,7 @@ function openPagos(pid){
 A.pagoSave=async t=>{const pid=t.dataset.id;const m=+$('#pgM').value;if(!(m>0)){toast('Escribe un monto');return}const id=newId('pagos');
   let comprobante;const f=$('#pgC')&&$('#pgC').files[0];
   if(f){t.disabled=true;toast('Subiendo comprobante…');try{comprobante=(await uploadImage(f,1800)).id}catch(err){t.disabled=false;toast(upErr(err));return}}
-  try{await setDoc('pagos/'+id,{pid,monto:m,fecha:$('#pgF').value||today(),nota:$('#pgN').value.trim(),comprobante});toast('Pago registrado');setTimeout(()=>openPagos(pid),120)}catch(_){}};
+  try{await setDoc('pagos/'+id,{pid,monto:m,fecha:$('#pgF').value||today(),nota:$('#pgN').value.trim(),comprobante});toast('¡Listo! Pago registrado.');setTimeout(()=>openPagos(pid),120)}catch(_){}};
 A.pagoDel=async t=>{const ok=await ask('Borrar pago','¿Borrar este pago registrado?',[{t:'Borrar',v:true,cls:'danger'},{t:'Volver',v:false}]);if(!ok)return;try{await delDoc('pagos/'+t.dataset.id);toast('Pago borrado');setTimeout(()=>openPagos(t.dataset.p),120)}catch(_){}};
 
 /* ============ Cuentas ============ */
@@ -743,7 +769,7 @@ function vCobrar(){
   const mesTotal=occ.reduce((s,o)=>s+costo(o),0);
   return `<div class="wrap stack">
     <div class="card"><div class="muted small">Total pendiente de cobro</div><div class="big">${money(total)}</div><div class="muted small">${deben.length} ${deben.length===1?'paciente':'pacientes'} con saldo</div></div>
-    ${deben.length?`<div class="sec-title">Con saldo pendiente</div>${deben.map(({p,sd})=>`<div class="card pitem" data-act="openPagos" data-id="${esc(p.id)}"><div class="avatar ${p.modalidad==='virtual'?'v':''}">${esc(initials(p.nombre))}</div><div class="grow"><div class="nm">${esc(p.nombre)}</div><div class="muted small">${PAGO[p.pago||'mensual']}</div></div><div class="amount due">${money(sd)}</div></div>`).join('')}`:illo('Balanza en equilibrio / alcancía: todo al día',120)}
+    ${deben.length?`<div class="sec-title">Con saldo pendiente</div>${deben.map(({p,sd})=>`<div class="card pitem" data-act="openPagos" data-id="${esc(p.id)}"><div class="avatar ${p.modalidad==='virtual'?'v':''}">${esc(initials(p.nombre))}</div><div class="grow"><div class="nm">${esc(p.nombre)}</div><div class="muted small">${PAGO[p.pago||'mensual']}</div></div><div class="amount due">${money(sd)}</div></div>`).join('')}`:froidEmpty('feliz','Todo al día','Nadie tiene saldo pendiente. ¡Bien!')}
     <div class="sec-title">Lo generado por mes</div>
     ${mesNav(mk,'mesNav')}
     <div class="card"><div class="row between"><b>Total del mes</b><b>${money(mesTotal)}</b></div><div class="muted small">${occ.length} sesiones cobrables</div>
@@ -780,9 +806,9 @@ function vRecibos(){
       :`<div class="btn primary sm filebtn" style="cursor:pointer"><span>Subir PDF de SUNAT</span><input type="file" accept="application/pdf" data-up="${esc(rid)}" data-m="${x.monto}"></div><button class="btn ghost sm" data-act="copyAmt" data-v="${x.monto}">Copiar monto</button>`}
     </div>${r&&r.enviado&&r.fechaEnvio?`<div class="muted small" style="margin-top:8px">Enviado el ${esc(fmtShort(r.fechaEnvio))}</div>`:''}</div>`};
   return `<div class="wrap stack">${mesNav(mk,'recNav')}
-    ${fin?`<div class="banner"><b>Hoy es fin de mes:</b> emite los recibos en SUNAT y súbelos aquí.</div>`:''}
+    ${fin?banner('complice','Fin de mes: emite los recibos en SUNAT y súbelos aquí.'):''}
     <div class="sec-title">Por enviar (${pend.length})</div>
-    ${pend.length?pend.map(card).join(''):`${illo('Sobre cerrado con un documento y un check: todo enviado',110)}`}
+    ${pend.length?pend.map(card).join(''):froidEmpty('feliz','Todo enviado','No queda ningún recibo por enviar este mes.')}
     <div class="sec-title">Enviados (${env.length})</div>
     ${env.length?env.map(card).join(''):'<div class="muted small">Todavía ninguno este mes.</div>'}
   </div>`;
@@ -895,7 +921,7 @@ function openClinical(pid){
       <button class="actbtn" data-act="matNote" data-id="${esc(pid)}">${MI.nota}Escribir nota<small>directo en la app</small></button>
     </div>
   </div>
-  ${items.length?Object.keys(groups).map(f=>`<div class="sec-title" style="text-transform:none;letter-spacing:0;font-size:14px;color:var(--ink2)">${esc(fmtLong(f))}${parseD(f).getFullYear()!==new Date().getFullYear()?' '+parseD(f).getFullYear():''}</div><div class="card" style="padding:4px 14px">${groups[f].map(row).join('')}</div>`).join(''):`<div class="muted small" style="margin-top:18px;text-align:center">Aún no hay material para ${esc(first(p.nombre))}.</div>`}
+  ${items.length?Object.keys(groups).map(f=>`<div class="sec-title" style="text-transform:none;letter-spacing:0;font-size:14px;color:var(--ink2)">${esc(fmtLong(f))}${parseD(f).getFullYear()!==new Date().getFullYear()?' '+parseD(f).getFullYear():''}</div><div class="card" style="padding:4px 14px">${groups[f].map(row).join('')}</div>`).join(''):froidEmpty('pensativo','Aún no hay material',`Cuando termines una sesión con ${esc(first(p.nombre))}, guarda aquí tu audio o tus notas.`)}
   <div class="muted small" style="margin-top:18px;text-align:center">Consejo: también puedes ir a la Grabadora, tocar <b>Compartir</b> y elegir <b>Consultorio</b>.</div>`);
   const fi=$('#matF');if(fi)fi.addEventListener('change',()=>{ui.matFecha=fi.value||today()});
 }
@@ -908,7 +934,7 @@ async function onMatFiles(i){
   const pid=i.dataset.mat;const fecha=($('#matF')&&$('#matF').value)||ui.matFecha||today();const fs=[...i.files];i.value='';
   if(!fs.length)return;toast(fs.length>1?`Guardando ${fs.length} archivos…`:'Guardando…');
   let n=0;for(const f of fs){try{await addMat(pid,fecha,f,f.name||'archivo');n++}catch(e){dbFail(e)}}
-  if(n)toast(n===1?'Guardado y cifrado':`${n} archivos guardados y cifrados`);openClinical(pid);
+  if(n)toast(n===1?'Hmm… guardado y cifrado.':`${n} archivos guardados y cifrados.`);openClinical(pid);
 }
 /* --- grabar dentro de la app --- */
 A.matRec=async t=>{
@@ -925,7 +951,7 @@ A.matRec=async t=>{
   const iv=setInterval(()=>{const s=Math.floor((Date.now()-t0)/1000);const el=$('#recT');if(el)el.textContent=`${Math.floor(s/60)}:${pad(s%60)}`},500);
   const stop=save=>{clearInterval(iv);rec.onstop=async()=>{stream.getTracks().forEach(x=>x.stop());ui.recording=false;
     if(save&&chunks.length){const type=(rec.mimeType||'audio/webm').split(';')[0];const ext=type.includes('mp4')?'m4a':type.includes('ogg')?'ogg':'webm';const d=new Date();
-      try{await addMat(pid,fecha,new Blob(chunks,{type}),`Reflexión ${fmtShort(fecha)} ${pad(d.getHours())}.${pad(d.getMinutes())}.${ext}`);toast('Grabación guardada y cifrada')}catch(e){dbFail(e)}}
+      try{await addMat(pid,fecha,new Blob(chunks,{type}),`Reflexión ${fmtShort(fecha)} ${pad(d.getHours())}.${pad(d.getMinutes())}.${ext}`);toast('Hmm… guardé tu nota de voz.')}catch(e){dbFail(e)}}
     openClinical(pid)};try{rec.stop()}catch(_){openClinical(pid)}};
   $('#recStop',sh).onclick=()=>stop(true);$('#recCancel',sh).onclick=()=>stop(false);
   rec.start(1000);
@@ -948,7 +974,7 @@ A.backClin=t=>openClinical(t.dataset.id);
 A.noteSave=async t=>{const pid=t.dataset.pid,mid=t.dataset.id;const x=$('#ntX').value;if(!x.trim()){toast('La nota está vacía');return}
   const prev=mid?clone(S.mat[mid]):{pid,tipo:'nota',creado:new Date().toISOString()};
   Object.assign(prev,{nombre:$('#ntT').value.trim()||'Nota',fecha:$('#ntF').value||today(),texto:x,resumen:x.trim().slice(0,60)});
-  try{await setDoc('material/'+(mid||newId()),prev);toast('Nota guardada');openClinical(pid)}catch(_){}};
+  try{await setDoc('material/'+(mid||newId()),prev);toast('Hmm… guardé tu nota.');openClinical(pid)}catch(_){}};
 /* --- ver un material --- */
 A.openMat=t=>openMat(t.dataset.id);
 async function openMat(id){
@@ -1057,26 +1083,17 @@ function vConfig(){
     <button class="btn ghost" data-act="lockNow">${MI.lock} Bloquear ahora</button>
     <div class="muted small" id="stInfo"></div>
   </div>
-  <div class="sec-title">Pantalla de bienvenida</div>
-  <div class="card stack">
-    ${c.fondo?`<div data-bgblob="${esc(c.fondo)}" style="height:140px;border-radius:14px;background:#eee center/cover"></div>`:illo('Aún no hay foto: se ve un degradado naranja-rosa',90)}
-    <div class="btn ghost filebtn"><span>${c.fondo?'Cambiar foto':'Elegir foto'}</span><input type="file" accept="image/*" data-bg="1"></div>
-    ${c.fondo?`<button class="link" data-act="bgDel">Quitar foto</button>`:''}
-    <div><label class="f">Círculo del ícono</label><div class="seg">${[['degradado','Degradado'],['blanco','Blanco']].map(([v,l])=>`<button class="${(c.iconoEstilo||(c.fondo?'degradado':'blanco'))===v?'on':''}" data-act="iconStyle" data-v="${v}">${l}</button>`).join('')}</div></div>
-  </div>
   <div class="sec-title">Traer datos de la versión anterior</div>
   <div class="card stack">
     <div class="small">En la app anterior (claude.ai) ve a Configuración → <b>Descargar copia al celular</b>. Luego elige ese archivo aquí. Las fotos de comprobantes y los PDF de recibos no venían en esa copia.</div>
     <div class="btn ghost filebtn"><span>Elegir archivo .json</span><input type="file" accept=".json,application/json" data-import="1"></div>
   </div>
-  <div class="muted small" style="text-align:center;margin:10px 0 30px">Todo se guarda solo en este teléfono, cifrado. La app no envía tus datos a ningún servidor.</div>
+  <div style="text-align:center;margin:18px 0 30px"><img src="img/logo-horizontal.svg" alt="Froid" style="height:58px;width:auto;opacity:.9"><div class="muted small" style="margin-top:8px">Todo se guarda solo en este teléfono, cifrado. Froid no envía tus datos a ningún servidor.</div></div>
   </div>`;
 }
 async function storageInfo(){const el=$('#stInfo');if(!el)return;try{const e=await navigator.storage.estimate();const p=navigator.storage.persisted?await navigator.storage.persisted():false;el.innerHTML=`Espacio usado: ${fmtSize(e.usage||0)}${p?' · Protegido contra borrado automático':''}`}catch(_){}}
 A.cfgSave=async()=>{const c=clone(S.cfg)||{};c.nombre=$('#cNom').value.trim();c.tarifa=+$('#cTar').value||DEF.tarifa;c.consultorio=+$('#cCons').value||0;c.hIni=Math.max(0,Math.min(23,+$('#cH0').value||DEF.hIni));c.hFin=Math.max(c.hIni+1,Math.min(24,+$('#cH1').value||DEF.hFin));try{await setDoc('config/app',c);toast('Guardado')}catch(_){}};
 A.cfgLock=async t=>{const c=clone(S.cfg)||{};c.bloqueo=+t.dataset.v;try{await setDoc('config/app',c);bump()}catch(_){}};
-A.iconStyle=async t=>{const c=clone(S.cfg)||{};c.iconoEstilo=t.dataset.v;try{await setDoc('config/app',c);toast('Listo. Mira cómo queda en la bienvenida.')}catch(_){}};
-A.bgDel=async()=>{const c=clone(S.cfg);const old=c.fondo;delete c.fondo;try{await setDoc('config/app',c);dropFile(old);toast('Foto quitada')}catch(_){}};
 A.lockNow=()=>lockNow();
 /* --- respaldo --- */
 function askPw(title,msg,btn){return new Promise(res=>{
@@ -1113,7 +1130,7 @@ async function restoreFrom(file,{setup}={}){
   progress('Restaurando…','Guardando archivos cifrados');
   try{await Vault.wipeAll();for(const[i,f]of bk.files.entries()){await Vault.putFileAs(f.id,f.blob,{type:f.type});setProg(i+1,bk.files.length)}
     for(const u of blobURLs.values())URL.revokeObjectURL(u);blobURLs.clear();
-    loadInto(bk.state);await persistNow();closeSheet();toast('Respaldo restaurado');return true}
+    loadInto(bk.state);await persistNow();closeSheet();toast('¡Listo! Respaldo restaurado.');return true}
   catch(e){closeSheet();toast('No se pudo terminar de restaurar. Inténtalo otra vez.');return false}
 }
 async function importOld(file){
@@ -1147,9 +1164,9 @@ function lockNow(){
 }
 function vLock(){
   const setup=lockMode==='setup';
-  return `<div class="lock"><div class="w-top" style="margin-top:max(7vh,28px)"><div class="mark grad">${ICON.mCal}</div><h1>${setup?'Bienvenido a tu administrador psicoanalítico':'Administrador psicoanalítico'}</h1></div>
+  return `<div class="lock"><img class="logo" src="img/logo-vertical.svg" alt="Froid, tu administrador psicoterapéutico"><h1>${setup?'¡Hola! Soy Froid, tu practicante.':'Te estaba esperando.'}</h1>
   <form class="lock-card stack" id="lkF" autocomplete="off">
-  ${setup?`<div class="small" style="color:var(--ink2)">Crea una contraseña para proteger la app. Todo lo que guardes quedará cifrado en este teléfono.</div>
+  ${setup?`<div class="small" style="color:var(--ink2)">Antes de empezar, crea una contraseña. Todo lo que guardes quedará cifrado en este teléfono: solo tú podrás abrirlo.</div>
     <div><label class="f">¿Cómo te llamas? (para el saludo)</label><input class="in" id="lkN" autocomplete="given-name"></div>
     <div><label class="f">Contraseña (mínimo 8 caracteres)</label><input class="in" type="password" id="lkP" autocomplete="new-password"></div>
     <div><label class="f">Repítela</label><input class="in" type="password" id="lkP2" autocomplete="new-password"></div>
@@ -1166,7 +1183,7 @@ function bindLock(){
     if(lockMode==='setup'){
       if(pw.length<8){toast('La contraseña debe tener al menos 8 caracteres');return}if(pw!==$('#lkP2').value){toast('Las contraseñas no coinciden');return}
       b.disabled=true;b.textContent='Creando…';
-      try{await Vault.create(pw);loadInto({cfg:{nombre:$('#lkN').value.trim()}});await persistNow();await afterUnlock();toast('Listo. Tu app está protegida.')}catch(err){b.disabled=false;b.textContent='Crear y entrar';toast('No se pudo crear. Inténtalo otra vez.')}
+      try{await Vault.create(pw);loadInto({cfg:{nombre:$('#lkN').value.trim()}});await persistNow();await afterUnlock();toast('¡Listo! Tu consulta está protegida.')}catch(err){b.disabled=false;b.textContent='Crear y entrar';toast('No se pudo crear. Inténtalo otra vez.')}
       return;
     }
     if(!pw)return;b.disabled=true;b.textContent='Abriendo…';

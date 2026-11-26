@@ -1,18 +1,31 @@
 {
-  "name": "Administrador psicoanalítico",
-  "short_name": "Consultorio",
-  "description": "Agenda, pacientes y cuentas del consultorio. Todo guardado y cifrado en este teléfono.",
+  "name": "Froid · tu administrador psicoterapéutico",
+  "short_name": "Froid",
+  "description": "Agenda, pacientes, cuentas y material de sesiones. Todo guardado y cifrado en este teléfono.",
   "lang": "es",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
   "orientation": "portrait",
-  "background_color": "#F7F6F9",
-  "theme_color": "#FF7A3D",
+  "background_color": "#F3C9C1",
+  "theme_color": "#F7EFE6",
   "icons": [
-    {"src": "icon-192.png", "sizes": "192x192", "type": "image/png"},
-    {"src": "icon-512.png", "sizes": "512x512", "type": "image/png"},
-    {"src": "icon-maskable.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable"}
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "icon-maskable.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
   ],
   "share_target": {
     "action": "./compartir",
@@ -21,7 +34,33 @@
     "params": {
       "title": "title",
       "text": "text",
-      "files": [{"name": "archivos", "accept": ["audio/*", "text/plain", "application/pdf", "application/msword", "application/vnd.openxmlformats-officedocument.wordprocessingml.document", "application/rtf", "application/vnd.oasis.opendocument.text", ".m4a", ".mp3", ".aac", ".amr", ".3gp", ".ogg", ".opus", ".wav", ".docx", ".doc", ".txt", ".rtf", ".odt"]}]
+      "files": [
+        {
+          "name": "archivos",
+          "accept": [
+            "audio/*",
+            "text/plain",
+            "application/pdf",
+            "application/msword",
+            "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+            "application/rtf",
+            "application/vnd.oasis.opendocument.text",
+            ".m4a",
+            ".mp3",
+            ".aac",
+            ".amr",
+            ".3gp",
+            ".ogg",
+            ".opus",
+            ".wav",
+            ".docx",
+            ".doc",
+            ".txt",
+            ".rtf",
+            ".odt"
+          ]
+        }
+      ]
     }
   }
 }

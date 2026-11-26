@@ -1,6 +1,6 @@
 /* Service worker: guarda la app para que funcione sin internet y recibe archivos compartidos. */
-const CACHE='consultorio-v1';
-const FILES=['./','./index.html','./vault.js','./manifest.webmanifest','./dmsans.woff2','./icon-192.png','./icon-512.png','./icon-maskable.png'];
+const CACHE='froid-v2';
+const FILES=['./','./index.html','./vault.js','./manifest.webmanifest','./dmsans.woff2','./icon-192.png','./icon-512.png','./icon-maskable.png','./fraunces.woff2','./img/logo-vertical.svg','./img/logo-horizontal.svg','./img/froid-atento.svg','./img/froid-tranquilo.svg','./img/froid-feliz.svg','./img/froid-complice.svg','./img/froid-pensativo.svg','./img/froid-sorprendido.svg'];
 self.addEventListener('install',e=>{e.waitUntil(caches.open(CACHE).then(c=>c.addAll(FILES)).then(()=>self.skipWaiting()))});
 self.addEventListener('activate',e=>{e.waitUntil(caches.keys().then(ks=>Promise.all(ks.filter(k=>k!==CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim()))});
 function inboxPut(items){return new Promise((res,rej)=>{const r=indexedDB.open('consultorio',1);r.onupgradeneeded=()=>{const d=r.result;for(const s of['meta','state','files','inbox'])if(!d.objectStoreNames.contains(s))d.createObjectStore(s)};r.onsuccess=()=>{const t=r.result.transaction('inbox','readwrite');const s=t.objectStore('inbox');for(const it of items)s.put(it,Date.now()+'-'+Math.random().toString(36).slice(2));t.oncomplete=()=>res();t.onerror=()=>rej(t.error)};r.onerror=()=>rej(r.error)})}
