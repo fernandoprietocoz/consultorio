@@ -6,7 +6,7 @@
 <title>Froid</title>
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' blob: data:; media-src 'self' blob:; font-src 'self'; connect-src 'self'; frame-src 'none'; object-src 'none'; base-uri 'self'; form-action 'self'">
 <meta name="referrer" content="no-referrer">
-<meta name="theme-color" content="#F7EFE6">
+<meta name="theme-color" content="#F3C9C1">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon-192.png">
 <link rel="apple-touch-icon" href="icon-192.png">
@@ -225,6 +225,24 @@ textarea.in{height:auto;min-height:96px;padding:12px 14px;resize:vertical}
 .doctext{white-space:pre-wrap;word-break:break-word;font-size:15px;line-height:1.55;max-height:55vh;overflow:auto}
 .recdot{width:16px;height:16px;border-radius:50%;background:var(--bad);animation:pl 1.2s infinite}
 .pbar{height:8px;border-radius:8px;background:#EBE0D5;overflow:hidden;margin:10px 0 6px}.pbar div{height:100%;width:0;background:var(--grad);transition:width .2s}
+
+/* ===== Froid cálido: fondos sólidos de la paleta ===== */
+:root{--bg:#F8E2D7;--card:#FFF6EF;--line:#EDCFC2;--peachS:#F6C9AE;--apri:#F9DCC0}
+.top{background:rgba(248,226,215,.95)}
+.icon-btn,.btn.ghost,.tabs button,.in,.radio,.actbtn,.seg button.on,.week,.wk-head{background:var(--card)}
+.icon-btn,.btn.ghost,.tabs button,.in,.radio,.actbtn{border-color:var(--line)}
+.seg{background:#F1CDBF}
+.chip.gray{background:#F3D6CA}
+.alert.info{background:#F3D6CA}
+.sheet{background:var(--bg)}
+.hero{background:var(--pink);border-radius:0 0 30px 30px;padding-bottom:16px;margin-bottom:6px}
+.hero .top{background:transparent;backdrop-filter:none;position:relative}
+.hero .muted{color:#5E5F85}
+.hero .bubble,.hero .bubble::before{background:#FFF6EF}
+.menu-item.m1{background:var(--pink)}.menu-item.m2{background:var(--peachS)}.menu-item.m3{background:var(--apri)}
+.menu-item .ico{background:#FFF6EF;box-shadow:none}
+.menu-item .muted{color:#5E5F85}
+.banner{background:#FFF6EF}
 </style>
 </head>
 <body>
@@ -461,10 +479,10 @@ function vMenu(){
   const t=today();const hoy=occurrences(t,t).filter(o=>ACT.has(o.estado));
   const fin=t===lastDay(mesKey(t));
   const d=new Date();
-  return `<div><div class="top" style="padding-bottom:0;background:transparent;backdrop-filter:none;position:relative"><div class="grow"></div><button class="icon-btn" data-act="go" data-to="config" aria-label="Configuración">${ICON.gear}</button></div>
-  <div class="hello"><div class="muted">${esc(fmtLong(t))}</div><h2>Hola${cfg('nombre')?', '+esc(cfg('nombre')):''}</h2></div></div>
-  <div class="wrap stack" style="margin-top:8px">
-    ${say(hoy.length?'atento':'tranquilo',hoy.length?`${new Date().getHours()<12?'¡Buen día!':'¡Hola!'} Hoy tienes ${hoy.length} ${hoy.length===1?'sesión':'sesiones'}. Yo llevo las cuentas.`:'Día libre. Yo cuido la agenda.')}
+  return `<div class="hero"><div class="top" style="padding-bottom:0"><div class="grow"></div><button class="icon-btn" data-act="go" data-to="config" aria-label="Configuración">${ICON.gear}</button></div>
+  <div class="hello"><div class="muted">${esc(fmtLong(t))}</div><h2>Hola${cfg('nombre')?', '+esc(cfg('nombre')):''}</h2></div>
+    <div class="wrap" style="margin-top:6px">${say(hoy.length?'atento':'tranquilo',hoy.length?`${new Date().getHours()<12?'¡Buen día!':'¡Hola!'} Hoy tienes ${hoy.length} ${hoy.length===1?'sesión':'sesiones'}. Yo llevo las cuentas.`:'Día libre. Yo cuido la agenda.')}</div></div>
+  <div class="wrap stack" style="margin-top:14px">
     ${!S.cfg.ultimoRespaldo||(Date.now()-new Date(S.cfg.ultimoRespaldo))>7*864e5?banner('sorprendido',`${S.cfg.ultimoRespaldo?'Hace más de una semana que no respaldas.':'Aún no tienes un respaldo.'} <button class="link" data-act="go" data-to="config">Respaldar en Proton Drive</button>`):''}
     ${parseD(t).getDate()===15&&Object.values(S.pac).some(p=>p.pago==='quincenal'&&(!p.fin||p.fin>=t))?banner('complice',`Hoy es 15: toca cobrar la quincena a ${esc(Object.values(S.pac).filter(p=>p.pago==='quincenal'&&(!p.fin||p.fin>=t)).map(p=>first(p.nombre)).join(', '))}. <button class="link" data-act="go" data-to="cuentas">Ver cuentas</button>`):''}
     ${fin?banner('complice',`Fin de mes: ¿emitimos los recibos en SUNAT? <button class="link" data-act="goRecibos">Ver recibos</button>`):''}
@@ -472,9 +490,9 @@ function vMenu(){
       <div class="row between"><b>Hoy</b><span class="muted small">${hoy.length} ${hoy.length===1?'sesión':'sesiones'}</span></div>
       ${hoy.length?`<div class="today-list">${hoy.map(o=>`<div class="r" data-act="openSes" data-k="${esc(o.key)}" style="cursor:pointer"><b style="width:78px;white-space:nowrap">${fmtH(o.hora)}</b><span class="dot ${o.modalidad==='virtual'?'vir':'pres'}"></span><span class="grow">${esc(o.p.nombre)}</span></div>`).join('')}</div>`:`<div class="muted small" style="margin-top:6px">No tienes sesiones hoy.</div>`}
     </div>
-    <div class="card menu-item" data-act="go" data-to="calendario"><div class="ico">${ICON.mCal}</div><div class="grow"><h3>Calendario</h3><div class="muted small">Semana y día con tus pacientes</div></div>${ICON.next.replace('<svg','<svg width="20"')}</div>
-    <div class="card menu-item" data-act="go" data-to="pacientes"><div class="ico">${ICON.mPac}</div><div class="grow"><h3>Pacientes</h3><div class="muted small">${Object.values(S.pac).filter(p=>estadoPac(p,t)==='activo').length} activos${Object.values(S.pac).some(p=>estadoPac(p,t)==='pausa')?` · ${Object.values(S.pac).filter(p=>estadoPac(p,t)==='pausa').length} en pausa`:''}</div></div>${ICON.next.replace('<svg','<svg width="20"')}</div>
-    <div class="card menu-item" data-act="go" data-to="cuentas"><div class="ico">${ICON.mCta}</div><div class="grow"><h3>Cuentas</h3><div class="muted small">Por cobrar · Por pagar · Recibos</div></div>${ICON.next.replace('<svg','<svg width="20"')}</div>
+    <div class="card menu-item m1" data-act="go" data-to="calendario"><div class="ico">${ICON.mCal}</div><div class="grow"><h3>Calendario</h3><div class="muted small">Semana y día con tus pacientes</div></div>${ICON.next.replace('<svg','<svg width="20"')}</div>
+    <div class="card menu-item m2" data-act="go" data-to="pacientes"><div class="ico">${ICON.mPac}</div><div class="grow"><h3>Pacientes</h3><div class="muted small">${Object.values(S.pac).filter(p=>estadoPac(p,t)==='activo').length} activos${Object.values(S.pac).some(p=>estadoPac(p,t)==='pausa')?` · ${Object.values(S.pac).filter(p=>estadoPac(p,t)==='pausa').length} en pausa`:''}</div></div>${ICON.next.replace('<svg','<svg width="20"')}</div>
+    <div class="card menu-item m3" data-act="go" data-to="cuentas"><div class="ico">${ICON.mCta}</div><div class="grow"><h3>Cuentas</h3><div class="muted small">Por cobrar · Por pagar · Recibos</div></div>${ICON.next.replace('<svg','<svg width="20"')}</div>
   </div>`;
 }
 A.goRecibos=()=>{ui.cuentasTab='recibos';ui.recMes=mesKey(today());location.hash='cuentas'};
@@ -1205,7 +1223,7 @@ async function boot(){
   if(!window.crypto||!crypto.subtle||!window.indexedDB){$('#app').innerHTML='<div class="wrap" style="padding-top:40px"><div class="alert bad">Este navegador no permite guardar datos cifrados. Abre la app en Chrome.</div></div>';return}
   try{lockMode=await Vault.isSetUp()?'unlock':'setup'}catch(_){lockMode='setup'}
   render();
-  if('serviceWorker'in navigator&&location.protocol==='https:')navigator.serviceWorker.register('./sw.js').catch(()=>{});
+  if('serviceWorker'in navigator&&location.protocol==='https:'){navigator.serviceWorker.register('./sw.js',{updateViaCache:'none'}).then(r=>r.update()).catch(()=>{});let rl=false;navigator.serviceWorker.addEventListener('controllerchange',()=>{if(!rl&&!Vault.unlocked()&&navigator.serviceWorker.controller){rl=true;location.reload()}})}
 }
 if(location.hash&&location.hash!=='#inicio')location.hash='inicio';
 setInterval(()=>{if(!Vault.unlocked())return;memo.clear();if(route()==='calendario'||route()==='menu')render()},5*60*1000);
